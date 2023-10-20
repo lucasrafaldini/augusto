@@ -21,8 +21,8 @@ jobs:
 
     - name: Build
       run: cargo build --verbose
-      working-directory: src/
+      working-directory: augusto/src
 
     - name: Run tests
       run: cargo test --verbose
-      working-directory: src/
+      working-directory: augusto/src
