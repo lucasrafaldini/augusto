@@ -2,9 +2,9 @@ name: Rust
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
   pull_request:
-    branches: [ "main" ]
+    branches: [main]
 
 env:
   CARGO_TERM_COLOR: always
@@ -15,8 +15,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v2  # Use the v2 version for improved experience
+      with:
+        submodules: recursive  # This is for handling submodules
+
+    - name: Set up Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        override: stable
+
     - name: Build
-      run: cd src & cargo build --verbose
+      run: cargo build --verbose
+      working-directory: src
+
     - name: Run tests
-      run: cd src & cargo test --verbose
+      run: cargo test --verbose
+      working-directory: src
