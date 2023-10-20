@@ -19,12 +19,6 @@ jobs:
       with:
         submodules: recursive  # This is for handling submodules
 
-    - name: Set up Rust
-      uses: actions-rs/toolchain@v1
-      with:
-        profile: minimal
-        override: stable
-
     - name: Build
       run: cargo build --verbose
       working-directory: src
