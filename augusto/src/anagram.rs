@@ -1,18 +1,21 @@
 pub fn letter_combinations(input: &str) -> Vec<String> {
-    if input.len() == 0 {
-        return vec!["".to_string()];
+    if input.len() <= 1 {
+        return vec![input.to_string()];
     }
-
-    let first_char = &input[0..1];
-    let rest = &input[1..];
-
-    let rest_combinations = letter_combinations(rest);
 
     let mut result = Vec::new();
 
-    for char in first_char.chars() {
-        for combination in &rest_combinations {
-            result.push(format!("{}{}", char, combination));
+    for (i, char) in input.chars().enumerate() {
+        let rest = input.chars().enumerate().filter_map(|(j, c)| {
+            if i != j {
+                Some(c)
+            } else {
+                None
+            }
+        }).collect::<String>();
+
+        for anagram in letter_combinations(&rest) {
+            result.push(format!("{}{}", char, anagram));
         }
     }
 
