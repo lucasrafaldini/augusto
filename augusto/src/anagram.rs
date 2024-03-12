@@ -3,7 +3,7 @@ pub fn letter_combinations(input: &str) -> Vec<String> {
         return vec![input.to_string()];
     }
 
-    let mut result = Vec::new();
+    let mut result:Vec<String> = Vec::new();
 
     for (i, char) in input.chars().enumerate() {
         let rest = input.chars().enumerate().filter_map(|(j, c)| {

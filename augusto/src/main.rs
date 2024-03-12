@@ -1,9 +1,11 @@
-use std::collections::HashSet;
+use std::{collections::HashSet, env};
 mod anagram;
 
 
 fn main() {
-    let result = anagram::letter_combinations("anagram");
+    let input: String = env::args().nth(1).expect("Missing input to generate anagrams");
+    // let result: Vec<String> = anagram::letter_combinations("anagram");
+    let result: Vec<String> = anagram::letter_combinations(&input);
 
     let set: HashSet<_> = result.into_iter().collect();
     println!("{:?}", set);
