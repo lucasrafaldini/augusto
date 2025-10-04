@@ -144,7 +144,7 @@ Refer to the detailed sections below for more information on each step
 
 ## Research Rust-Specific Safety and Runtime Constraints
 
-Before proceeding, you must **research and return** with relevant information from trusted sources such as [docs.rs](https://docs.rs), [GUI-rs.org](https://GUI-rs.org), [The Rust Book](https://doc.rust-lang.org/book/), and [users.rust-lang.org](https://users.rust-lang.org).
+Before proceeding, you must **research and return** with relevant information from trusted sources such as [docs.rs](https://docs.rs), [gtk-rs.org](https://gtk-rs.org), [The Rust Book](https://doc.rust-lang.org/book/), and [users.rust-lang.org](https://users.rust-lang.org).
 
 The goal is to fully understand how to write safe, idiomatic, and performant Rust code in the following contexts:
 
