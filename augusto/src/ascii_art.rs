@@ -93,47 +93,7 @@ fn get_letter_pattern(letter: char) -> Vec<String> {
 /// - Each letter is displayed using a 5x5 character grid
 /// - Letters are separated by one space
 pub fn word_art(main_word: &str, filler_word: &str) -> String {
-    if main_word.is_empty() || filler_word.is_empty() {
-        return String::new();
-    }
-
-    let main_chars: Vec<char> = main_word.chars().collect();
-    let filler_chars: Vec<char> = filler_word.chars().collect();
-    let mut filler_index = 0;
-
-    // Get patterns for all letters
-    let patterns: Vec<Vec<String>> = main_chars.iter().map(|&c| get_letter_pattern(c)).collect();
-
-    // Build the output line by line
-    let mut output = String::new();
-
-    for line_num in 0..5 {
-        let mut line = String::new();
-
-        for (letter_idx, pattern) in patterns.iter().enumerate() {
-            let pattern_line = &pattern[line_num];
-
-            // Replace each '#' with characters from filler word
-            for ch in pattern_line.chars() {
-                if ch == '#' {
-                    line.push(filler_chars[filler_index % filler_chars.len()]);
-                    filler_index += 1;
-                } else {
-                    line.push(' ');
-                }
-            }
-
-            // Add spacing between letters (except for the last one)
-            if letter_idx < patterns.len() - 1 {
-                line.push(' ');
-            }
-        }
-
-        output.push_str(&line);
-        output.push('\n');
-    }
-
-    output
+    word_art_with_spacing(main_word, filler_word, 1)
 }
 
 /// Creates ASCII art with custom styling options
