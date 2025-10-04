@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **ASCII Art Feature**: New `art` command to create ASCII art using one word to fill another
+  - Supports all uppercase letters A-Z
+  - Filler word cycles through if pattern needs more characters
+  - 5x5 character grid for each letter
+  - Inspired by concrete poetry techniques
+  - **LUXO/LIXO example**: Tribute to Augusto de Campos' iconic concrete poem
+- Command-based CLI interface with subcommands (`anagram`, `art`, `help`)
+- Comprehensive help system with usage examples
+- Additional test coverage for ASCII art functionality (6 new tests including LUXO/LIXO)
+- Backwards compatibility: plain word input still works as anagram command
 - Comprehensive README documentation with installation instructions
 - Code documentation for all public modules and functions
 - Additional unit tests for edge cases
@@ -16,9 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CHANGELOG.md file for tracking project changes
 
 ### Changed
+- CLI now uses command-based interface (anagram, art, help)
 - Enhanced Cargo.toml with complete metadata
 - Improved CLI with usage instructions
 - Updated Code of Conduct reference in README
+- Main module now includes both anagram and ascii_art modules
 
 ### Fixed
 - GitHub Actions workflow directory paths

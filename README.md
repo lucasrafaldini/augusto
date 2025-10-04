@@ -8,13 +8,14 @@ augusto is a Rust command-line suite that allows you to interact with words in c
 
 ## Introduction
 
-Inspired by the Brazilian concrete poet Augusto de Campos, who explored the visual and sonic dimensions of language, **augusto** empowers you to deconstruct and recombine words through various operations. Currently featuring anagram generation, with plans to expand into analogic interpolations and other word transformations.
+Inspired by the Brazilian concrete poet Augusto de Campos, who explored the visual and sonic dimensions of language, **augusto** empowers you to deconstruct and recombine words through various operations. Currently featuring anagram generation and ASCII art creation, with plans to expand into analogic interpolations and other word transformations.
 
 ## Features
 
 - 🔄 **Anagram Generation**: Generate all possible letter combinations of a word
+- 🎨 **ASCII Art**: Write one word using another word as filler, creating concrete poetry
 - 🚀 **Fast & Efficient**: Built with Rust for optimal performance
-- 📦 **Zero Dependencies**: Minimal dependency footprint (only termion for terminal interactions)
+- 📦 **Minimal Dependencies**: Lightweight footprint (only termion for terminal interactions)
 - 🎯 **CLI-First**: Designed for seamless command-line workflows
 
 ## Table of Contents
@@ -66,17 +67,33 @@ This makes `augusto` available system-wide.
 
 Once installed, you can start using augusto immediately:
 
+### Anagrams
 ```bash
+augusto anagram "cat"
+# or for backwards compatibility:
 augusto "cat"
 ```
 
 This will generate all anagrams of the word "cat".
 
+### ASCII Art
+```bash
+augusto art "RUST" "code"
+```
+
+This will create ASCII art of the word "RUST" using the letters from "code" as filler.
+
 ## Usage
 
-### Basic Anagram Generation
+### Commands
+
+Augusto supports multiple commands for different word operations:
+
+#### Anagram Generation
 
 ```bash
+augusto anagram <word>
+# or simply:
 augusto <word>
 ```
 
@@ -86,27 +103,97 @@ augusto <word>
 **Output:**
 The command outputs a set of unique anagrams generated from the input word.
 
+#### ASCII Art Creation
+
+```bash
+augusto art <main_word> <filler_word>
+```
+
+**Arguments:**
+- `<main_word>`: The word to display in large ASCII letters
+- `<filler_word>`: The word whose letters will be used to fill the pattern
+
+**Output:**
+ASCII art representation of the main word, filled with characters from the filler word.
+
+#### Help
+
+```bash
+augusto help
+# or:
+augusto --help
+```
+
 ## Examples
 
-### Simple Word
+### Anagram Examples
+
+#### Simple Word
 ```bash
-augusto "cat"
+augusto anagram "cat"
 # Output: {"tca", "act", "cta", "tac", "atc", "cat"}
 ```
 
-### Short Word with Repeated Letters
+#### Short Word with Repeated Letters
 ```bash
-augusto "aba"
+augusto anagram "aba"
 # Output: {"aab", "baa", "aba"}
 ```
 
-### Longer Words
+#### Longer Words
 ```bash
-augusto "rust"
+augusto anagram "rust"
 # Output: All 24 permutations of "rust"
 ```
 
 **Note:** The number of anagrams grows factorially with word length. For a word with n unique letters, expect n! combinations.
+
+### ASCII Art Examples
+
+#### Simple Example
+```bash
+augusto art "HI" "rust"
+# Output:
+# r   u strus
+# t   r   u  
+# strus   t  
+# r   u   s  
+# t   r ustru
+```
+
+#### Word Art
+```bash
+augusto art "RUST" "code"
+# Output:
+# code  c   o  deco decod
+# e   c o   d e       c  
+# odec  o   d  eco    d  
+# e  c  o   d     e   c  
+# o   d  eco  deco    d
+```
+
+#### LUXO/LIXO - Tribute to Augusto de Campos
+```bash
+augusto art "LUXO" "LIXO"
+# Output:
+# L     I   X O   L  IXO 
+# L     I   X  O L  I   X
+# O     L   I   X   O   L
+# I     X   O  L I  X   O
+# LIXOL  IXO  L   I  XOL
+#
+# Inspired by Augusto de Campos' iconic concrete poem
+# "LUXO" (luxury) written with "LIXO" (trash)
+# A powerful commentary on consumerism and social inequality
+```
+
+#### Creative Poetry
+```bash
+augusto art "LOVE" "heart"
+# Creates ASCII art spelling "LOVE" filled with letters from "heart"
+```
+
+**Tip:** The filler word is repeated cyclically, so experiment with different combinations to create unique visual effects!
 
 ## Development
 
@@ -117,7 +204,8 @@ augusto/
 ├── augusto/              # Main Rust project
 │   ├── src/
 │   │   ├── main.rs       # Entry point and CLI handling
-│   │   └── anagram.rs    # Anagram generation logic
+│   │   ├── anagram.rs    # Anagram generation logic
+│   │   └── ascii_art.rs  # ASCII art generation logic
 │   ├── Cargo.toml        # Project dependencies
 │   └── Cargo.lock        # Locked dependencies
 ├── .github/
