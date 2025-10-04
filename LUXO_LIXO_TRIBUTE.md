@@ -156,7 +156,7 @@ cargo build --release
 ./target/release/augusto art "PEACE" "CHAOS"
 ./target/release/augusto art "LOVE" "HATE"
 ./target/release/augusto art "TRUTH" "LIES"
-```
+
 
 ## Conclusion
 

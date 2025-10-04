@@ -14,6 +14,7 @@ Inspired by the Brazilian concrete poet Augusto de Campos, who explored the visu
 
 - 🔄 **Anagram Generation**: Generate all possible letter combinations of a word
 - 🎨 **ASCII Art**: Write one word using another word as filler, creating concrete poetry
+- ⚡ **Performance Benchmarks**: Measure and analyze operation performance with detailed statistics
 - 🚀 **Fast & Efficient**: Built with Rust for optimal performance
 - 📦 **Minimal Dependencies**: Lightweight footprint (only termion for terminal interactions)
 - 🎯 **CLI-First**: Designed for seamless command-line workflows
@@ -116,6 +117,28 @@ augusto art <main_word> <filler_word>
 **Output:**
 ASCII art representation of the main word, filled with characters from the filler word.
 
+#### Performance Benchmarking
+
+```bash
+augusto bench <operation> <arguments...>
+```
+
+**Arguments:**
+- `<operation>`: The operation to benchmark (`anagram` or `art`)
+- `<arguments>`: Arguments for the operation
+
+**Output:**
+Detailed performance statistics including execution time, throughput, and iterations.
+
+**Examples:**
+```bash
+# Benchmark anagram generation
+augusto bench anagram "test"
+
+# Benchmark ASCII art
+augusto bench art "RUST" "code"
+```
+
 #### Help
 
 ```bash
@@ -195,6 +218,47 @@ augusto art "LOVE" "heart"
 
 **Tip:** The filler word is repeated cyclically, so experiment with different combinations to create unique visual effects!
 
+### Performance Benchmark Examples
+
+#### Benchmark Anagram Generation
+```bash
+augusto bench anagram "cat"
+# Output:
+# ╔════════════════════════════════════════════════════════════╗
+# ║              PERFORMANCE BENCHMARK RESULTS                 ║
+# ╚════════════════════════════════════════════════════════════╝
+# 
+# Operation:        Anagram Generation
+# Input:            "cat"
+# Input length:     3 character(s)
+# Output size:      6 item(s)
+# 
+# Total time:       48.29ms
+# Iterations:       10000
+# Avg per run:      4μs
+# Throughput:       207087 ops/sec
+```
+
+#### Benchmark ASCII Art
+```bash
+augusto bench art "LUXO" "LIXO"
+# Output:
+# ╔════════════════════════════════════════════════════════════╗
+# ║              PERFORMANCE BENCHMARK RESULTS                 ║
+# ╚════════════════════════════════════════════════════════════╝
+# 
+# Operation:        ASCII Art Generation
+# Input:            "LUXO+LIXO"
+# Input length:     9 character(s)
+# 
+# Total time:       358μs
+# Iterations:       10
+# Avg per run:      35μs
+# Throughput:       27929 ops/sec
+```
+
+**Note:** Benchmark iterations automatically adjust based on input complexity. Shorter inputs run more iterations for accurate measurements.
+
 ## Development
 
 ### Project Structure
@@ -205,7 +269,8 @@ augusto/
 │   ├── src/
 │   │   ├── main.rs       # Entry point and CLI handling
 │   │   ├── anagram.rs    # Anagram generation logic
-│   │   └── ascii_art.rs  # ASCII art generation logic
+│   │   ├── ascii_art.rs  # ASCII art generation logic
+│   │   └── benchmark.rs  # Performance benchmarking utilities
 │   ├── Cargo.toml        # Project dependencies
 │   └── Cargo.lock        # Locked dependencies
 ├── .github/
@@ -270,10 +335,11 @@ Please ensure your contributions adhere to our [Code of Conduct](CONTRIBUTE.md).
 
 ### Version 0.1.x (Current)
 - [x] Basic anagram generation
+- [x] ASCII art generation
 - [x] CLI interface
 - [x] Unit tests
-- [ ] Performance benchmarks
-- [ ] Documentation improvements
+- [x] Performance benchmarks
+- [x] Documentation improvements
 
 ### Version 0.2.0 (Planned)
 - [ ] Word combination operations
