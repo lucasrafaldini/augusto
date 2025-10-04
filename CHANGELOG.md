@@ -8,13 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Performance Benchmarking Feature**: New `bench` command to measure operation performance
+  - Automatic iteration count adjustment based on input complexity
+  - Detailed statistics: execution time, throughput, avg per run
+  - Support for benchmarking anagram and ASCII art operations
+  - Formatted output with visual tables
+  - 6 comprehensive unit tests for benchmark functionality
 - **ASCII Art Feature**: New `art` command to create ASCII art using one word to fill another
   - Supports all uppercase letters A-Z
   - Filler word cycles through if pattern needs more characters
   - 5x5 character grid for each letter
   - Inspired by concrete poetry techniques
   - **LUXO/LIXO example**: Tribute to Augusto de Campos' iconic concrete poem
-- Command-based CLI interface with subcommands (`anagram`, `art`, `help`)
+- Command-based CLI interface with subcommands (`anagram`, `art`, `bench`, `help`)
 - Comprehensive help system with usage examples
 - Additional test coverage for ASCII art functionality (6 new tests including LUXO/LIXO)
 - Backwards compatibility: plain word input still works as anagram command

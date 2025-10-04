@@ -11,11 +11,15 @@
 //!
 //! # Create ASCII art
 //! augusto art "WORD" "filler"
+//!
+//! # Benchmark performance
+//! augusto bench anagram "word"
 //! ```
 
 use std::{collections::HashSet, env};
 mod anagram;
 mod ascii_art;
+mod benchmark;
 
 /// Main entry point for the augusto CLI tool
 ///
@@ -23,12 +27,14 @@ mod ascii_art;
 ///
 /// - `anagram <word>` - Generate all anagrams of a word
 /// - `art <main_word> <filler_word>` - Create ASCII art using one word to fill another
+/// - `bench <operation> <args...>` - Benchmark an operation and show performance stats
 ///
 /// # Examples
 ///
 /// ```bash
 /// augusto anagram "cat"
 /// augusto art "RUST" "code"
+/// augusto bench anagram "test"
 /// ```
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -60,6 +66,16 @@ fn main() {
             }
             run_ascii_art(&args[2], &args[3]);
         }
+        "bench" | "benchmark" | "perf" => {
+            if args.len() < 3 {
+                eprintln!("Error: Missing operation to benchmark");
+                eprintln!("\nUsage: augusto bench <operation> <args...>");
+                eprintln!("Example: augusto bench anagram \"test\"");
+                eprintln!("         augusto bench art \"HI\" \"rust\"");
+                std::process::exit(1);
+            }
+            run_benchmark(&args[2..]);
+        }
         "help" | "--help" | "-h" => {
             print_usage();
         }
@@ -86,11 +102,14 @@ fn print_usage() {
     println!("COMMANDS:");
     println!("    anagram <word>                  Generate all anagrams of a word");
     println!("    art <main> <filler>             Create ASCII art using filler word");
+    println!("    bench <operation> <args...>     Benchmark an operation with stats");
     println!("    help                            Show this help message");
     println!();
     println!("EXAMPLES:");
     println!("    augusto anagram \"cat\"");
     println!("    augusto art \"RUST\" \"code\"");
+    println!("    augusto bench anagram \"test\"");
+    println!("    augusto bench art \"HI\" \"rust\"");
     println!();
     println!("For backwards compatibility, you can also use:");
     println!("    augusto <word>                  (same as 'anagram' command)");
@@ -128,6 +147,63 @@ fn run_ascii_art(main_word: &str, filler_word: &str) {
     // Generate ASCII art
     let art = ascii_art::word_art(main_word, filler_word);
     println!("{}", art);
+}
+
+/// Run benchmark for an operation
+fn run_benchmark(args: &[String]) {
+    if args.is_empty() {
+        eprintln!("Error: No operation specified for benchmark");
+        std::process::exit(1);
+    }
+
+    let operation = &args[0].to_lowercase();
+
+    match operation.as_str() {
+        "anagram" | "ana" => {
+            if args.len() < 2 {
+                eprintln!("Error: Missing word for anagram benchmark");
+                eprintln!("\nUsage: augusto bench anagram <word>");
+                std::process::exit(1);
+            }
+            
+            let input = &args[1];
+            
+            // Benchmark anagram generation
+            let stats = benchmark::benchmark_with_result("Anagram Generation", input, || {
+                anagram::letter_combinations(input)
+            });
+            
+            println!("{}", stats);
+        }
+        "art" | "ascii" => {
+            if args.len() < 3 {
+                eprintln!("Error: Missing words for ASCII art benchmark");
+                eprintln!("\nUsage: augusto bench art <main_word> <filler_word>");
+                std::process::exit(1);
+            }
+            
+            let main_word = &args[1];
+            let filler_word = &args[2];
+            
+            // Benchmark ASCII art generation
+            let stats = benchmark::benchmark_operation(
+                "ASCII Art Generation",
+                &format!("{}+{}", main_word, filler_word),
+                || {
+                    ascii_art::word_art(main_word, filler_word)
+                },
+            );
+            
+            println!("{}", stats);
+        }
+        _ => {
+            eprintln!("Error: Unknown operation '{}' for benchmark", operation);
+            eprintln!("\nSupported operations:");
+            eprintln!("  - anagram <word>");
+            eprintln!("  - art <main_word> <filler_word>");
+            std::process::exit(1);
+        }
+    }
 }
 
 #[cfg(test)]
