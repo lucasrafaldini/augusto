@@ -65,7 +65,20 @@ fn main() {
                 eprintln!("         augusto art \"RUST\" \"code\" 2");
                 std::process::exit(1);
             }
-            let spacing = args.get(4).and_then(|s| s.parse::<usize>().ok()).unwrap_or(0);
+            let spacing = if let Some(s) = args.get(4) {
+                match s.parse::<usize>() {
+                    Ok(val) => val,
+                    Err(_) => {
+                        eprintln!("Error: Invalid spacing value '{}'. Spacing must be a non-negative integer.", s);
+                        eprintln!("\nUsage: augusto art <main_word> <filler_word> [spacing]");
+                        eprintln!("Example: augusto art \"RUST\" \"code\"");
+                        eprintln!("         augusto art \"RUST\" \"code\" 2");
+                        std::process::exit(1);
+                    }
+                }
+            } else {
+                0
+            };
             run_ascii_art(&args[2], &args[3], spacing);
         }
         "bench" | "benchmark" | "perf" => {
