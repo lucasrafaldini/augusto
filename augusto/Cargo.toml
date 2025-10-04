@@ -2,6 +2,15 @@
 name = "augusto"
 version = "0.1.0"
 edition = "2021"
+authors = ["Lucas Rafaldini <lucas.rafaldini@gmail.com>"]
+description = "A Rust command-line suite for creative word operations, inspired by concrete poet Augusto de Campos"
+license = "MIT"
+repository = "https://github.com/lucasrafaldini/augusto"
+homepage = "https://github.com/lucasrafaldini/augusto"
+documentation = "https://github.com/lucasrafaldini/augusto"
+readme = "../README.md"
+keywords = ["cli", "word-games", "anagram", "poetry", "text"]
+categories = ["command-line-utilities", "text-processing"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
