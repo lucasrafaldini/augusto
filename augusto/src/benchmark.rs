@@ -202,7 +202,6 @@ fn calculate_iterations(input: &str) -> usize {
 }
 
 /// Benchmark multiple operations and compare them
-#[allow(dead_code)]
 pub struct BenchmarkSuite {
     results: Vec<BenchmarkStats>,
 }
@@ -216,13 +215,11 @@ impl BenchmarkSuite {
     }
 
     /// Add a benchmark result
-    #[allow(dead_code)]
     pub fn add(&mut self, stats: BenchmarkStats) {
         self.results.push(stats);
     }
 
     /// Format comparison results
-    #[allow(dead_code)]
     pub fn format_comparison(&self) -> String {
         if self.results.is_empty() {
             return String::from("No benchmark results to compare.\n");

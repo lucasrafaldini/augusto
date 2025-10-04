@@ -149,7 +149,6 @@ pub fn word_art(main_word: &str, filler_word: &str) -> String {
 /// # Returns
 ///
 /// A `String` containing the ASCII art representation
-#[allow(dead_code)]
 pub fn word_art_with_spacing(main_word: &str, filler_word: &str, spacing: usize) -> String {
     if main_word.is_empty() || filler_word.is_empty() {
         return String::new();
