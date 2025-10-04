@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 # Script to fix line endings in all markdown files
 
 echo "Normalizing line endings in markdown files..."
