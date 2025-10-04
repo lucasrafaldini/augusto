@@ -193,14 +193,14 @@ fn run_benchmark(args: &[String]) {
                 eprintln!("\nUsage: augusto bench anagram <word>");
                 std::process::exit(1);
             }
-            
+
             let input = &args[1];
-            
+
             // Benchmark anagram generation
             let stats = benchmark::benchmark_with_result("Anagram Generation", input, || {
                 anagram::letter_combinations(input)
             });
-            
+
             println!("{}", stats);
         }
         "art" | "ascii" => {
@@ -209,19 +209,17 @@ fn run_benchmark(args: &[String]) {
                 eprintln!("\nUsage: augusto bench art <main_word> <filler_word>");
                 std::process::exit(1);
             }
-            
+
             let main_word = &args[1];
             let filler_word = &args[2];
-            
+
             // Benchmark ASCII art generation
             let stats = benchmark::benchmark_operation(
                 "ASCII Art Generation",
                 &format!("{}+{}", main_word, filler_word),
-                || {
-                    ascii_art::word_art(main_word, filler_word)
-                },
+                || ascii_art::word_art(main_word, filler_word),
             );
-            
+
             println!("{}", stats);
         }
         _ => {

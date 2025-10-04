@@ -244,17 +244,21 @@ mod tests {
         // Tribute to Augusto de Campos' iconic concrete poem LUXO/LIXO
         // "LUXO" (luxury) written with "LIXO" (trash) - a powerful social commentary
         let result = word_art("LUXO", "LIXO");
-        
+
         assert!(!result.is_empty());
-        
+
         // Check that the output contains letters from LIXO
-        assert!(result.contains('L') || result.contains('I') || 
-                result.contains('X') || result.contains('O'));
-        
+        assert!(
+            result.contains('L')
+                || result.contains('I')
+                || result.contains('X')
+                || result.contains('O')
+        );
+
         // Verify the result has 5 lines (one for each row in the 5x5 grid)
         let lines: Vec<&str> = result.lines().collect();
         assert_eq!(lines.len(), 5);
-        
+
         // Each line should have content (not be empty)
         for line in lines {
             assert!(!line.trim().is_empty());

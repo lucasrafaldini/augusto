@@ -73,33 +73,42 @@ impl BenchmarkStats {
     /// Get a formatted string representation of the stats
     pub fn format(&self) -> String {
         let mut output = String::new();
-        
+
         output.push_str("\n╔════════════════════════════════════════════════════════════╗\n");
         output.push_str("║              PERFORMANCE BENCHMARK RESULTS                 ║\n");
         output.push_str("╚════════════════════════════════════════════════════════════╝\n\n");
-        
+
         output.push_str(&format!("Operation:        {}\n", self.operation));
         output.push_str(&format!("Input:            \"{}\"\n", self.input));
-        output.push_str(&format!("Input length:     {} character(s)\n", self.input.len()));
-        
+        output.push_str(&format!(
+            "Input length:     {} character(s)\n",
+            self.input.len()
+        ));
+
         if let Some(size) = self.output_size {
             output.push_str(&format!("Output size:      {} item(s)\n", size));
         }
-        
+
         output.push('\n');
-        output.push_str(&format!("Total time:       {}\n", Self::format_duration(self.duration)));
+        output.push_str(&format!(
+            "Total time:       {}\n",
+            Self::format_duration(self.duration)
+        ));
         output.push_str(&format!("Iterations:       {}\n", self.iterations));
-        output.push_str(&format!("Avg per run:      {}\n", Self::format_duration(self.avg_duration)));
-        
+        output.push_str(&format!(
+            "Avg per run:      {}\n",
+            Self::format_duration(self.avg_duration)
+        ));
+
         // Calculate throughput
         if self.duration.as_micros() > 0 {
             let ops_per_sec = (self.iterations as f64 / self.duration.as_secs_f64()) as u64;
             output.push_str(&format!("Throughput:       {} ops/sec\n", ops_per_sec));
         }
-        
+
         output.push('\n');
         output.push_str("╚════════════════════════════════════════════════════════════╝\n");
-        
+
         output
     }
 }
@@ -150,11 +159,7 @@ where
 /// Benchmark an operation that returns a result
 ///
 /// Similar to benchmark_operation but captures the output size
-pub fn benchmark_with_result<F, T>(
-    operation: &str,
-    input: &str,
-    mut f: F,
-) -> BenchmarkStats
+pub fn benchmark_with_result<F, T>(operation: &str, input: &str, mut f: F) -> BenchmarkStats
 where
     F: FnMut() -> T,
     T: IntoIterator,
@@ -185,7 +190,7 @@ where
 /// Calculate appropriate number of iterations based on input
 fn calculate_iterations(input: &str) -> usize {
     let len = input.len();
-    
+
     // For very short inputs, do more iterations
     if len <= 3 {
         10000
@@ -226,17 +231,23 @@ impl BenchmarkSuite {
         }
 
         let mut output = String::new();
-        
+
         output.push_str("\n╔════════════════════════════════════════════════════════════╗\n");
         output.push_str("║              BENCHMARK COMPARISON                          ║\n");
         output.push_str("╚════════════════════════════════════════════════════════════╝\n\n");
 
         for (i, stat) in self.results.iter().enumerate() {
-            output.push_str(&format!("{}. {} with input \"{}\"\n", 
-                i + 1, stat.operation, stat.input));
-            output.push_str(&format!("   Time: {} (avg: {})\n", 
+            output.push_str(&format!(
+                "{}. {} with input \"{}\"\n",
+                i + 1,
+                stat.operation,
+                stat.input
+            ));
+            output.push_str(&format!(
+                "   Time: {} (avg: {})\n",
                 BenchmarkStats::format_duration(stat.duration),
-                BenchmarkStats::format_duration(stat.avg_duration)));
+                BenchmarkStats::format_duration(stat.avg_duration)
+            ));
             if let Some(size) = stat.output_size {
                 output.push_str(&format!("   Output: {} items\n", size));
             }
@@ -325,16 +336,16 @@ mod tests {
     #[test]
     fn test_benchmark_suite() {
         let mut suite = BenchmarkSuite::new();
-        
+
         let stats1 = BenchmarkStats::new(
             "op1".to_string(),
             "test".to_string(),
             Duration::from_millis(10),
             100,
         );
-        
+
         suite.add(stats1);
-        
+
         let comparison = suite.format_comparison();
         assert!(comparison.contains("op1"));
         assert!(comparison.contains("test"));
