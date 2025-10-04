@@ -171,7 +171,7 @@ fn run_ascii_art(main_word: &str, filler_word: &str, spacing: usize) {
         std::process::exit(1);
     }
 
-    // Generate ASCII art, always using word_art_with_spacing and defaulting spacing to 1 if 0
+    // Generate ASCII art; if spacing is 0, default to 1
     let effective_spacing = if spacing == 0 { 1 } else { spacing };
     let art = ascii_art::word_art_with_spacing(main_word, filler_word, effective_spacing);
     println!("{}", art);
