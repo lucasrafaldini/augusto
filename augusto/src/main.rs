@@ -60,11 +60,26 @@ fn main() {
         "art" | "ascii" => {
             if args.len() < 4 {
                 eprintln!("Error: Missing words for ASCII art generation");
-                eprintln!("\nUsage: augusto art <main_word> <filler_word>");
+                eprintln!("\nUsage: augusto art <main_word> <filler_word> [spacing]");
                 eprintln!("Example: augusto art \"RUST\" \"code\"");
+                eprintln!("         augusto art \"RUST\" \"code\" 2");
                 std::process::exit(1);
             }
-            run_ascii_art(&args[2], &args[3]);
+            let spacing = if let Some(s) = args.get(4) {
+                match s.parse::<usize>() {
+                    Ok(val) => val,
+                    Err(_) => {
+                        eprintln!("Error: Invalid spacing value '{}'. Spacing must be a non-negative integer.", s);
+                        eprintln!("\nUsage: augusto art <main_word> <filler_word> [spacing]");
+                        eprintln!("Example: augusto art \"RUST\" \"code\"");
+                        eprintln!("         augusto art \"RUST\" \"code\" 2");
+                        std::process::exit(1);
+                    }
+                }
+            } else {
+                0
+            };
+            run_ascii_art(&args[2], &args[3], spacing);
         }
         "bench" | "benchmark" | "perf" => {
             if args.len() < 3 {
@@ -75,6 +90,15 @@ fn main() {
                 std::process::exit(1);
             }
             run_benchmark(&args[2..]);
+        }
+        "compare" | "comp" => {
+            if args.len() < 3 {
+                eprintln!("Error: Missing words for benchmark comparison");
+                eprintln!("\nUsage: augusto compare <word1> <word2> ...");
+                eprintln!("Example: augusto compare \"cat\" \"test\" \"program\"");
+                std::process::exit(1);
+            }
+            run_comparison(&args[2..]);
         }
         "help" | "--help" | "-h" => {
             print_usage();
@@ -100,16 +124,19 @@ fn print_usage() {
     println!("    augusto <command> [arguments]");
     println!();
     println!("COMMANDS:");
-    println!("    anagram <word>                  Generate all anagrams of a word");
-    println!("    art <main> <filler>             Create ASCII art using filler word");
-    println!("    bench <operation> <args...>     Benchmark an operation with stats");
-    println!("    help                            Show this help message");
+    println!("    anagram <word>                      Generate all anagrams of a word");
+    println!("    art <main> <filler> [spacing]       Create ASCII art (optional spacing)");
+    println!("    bench <operation> <args...>         Benchmark an operation with stats");
+    println!("    compare <word1> <word2> ...         Compare anagram performance");
+    println!("    help                                Show this help message");
     println!();
     println!("EXAMPLES:");
     println!("    augusto anagram \"cat\"");
     println!("    augusto art \"RUST\" \"code\"");
+    println!("    augusto art \"RUST\" \"code\" 2");
     println!("    augusto bench anagram \"test\"");
     println!("    augusto bench art \"HI\" \"rust\"");
+    println!("    augusto compare \"cat\" \"test\" \"program\"");
     println!();
     println!("For backwards compatibility, you can also use:");
     println!("    augusto <word>                  (same as 'anagram' command)");
@@ -133,7 +160,7 @@ fn run_anagram(input: &str) {
 }
 
 /// Run ASCII art generation
-fn run_ascii_art(main_word: &str, filler_word: &str) {
+fn run_ascii_art(main_word: &str, filler_word: &str, spacing: usize) {
     // Validate input
     if main_word.is_empty() {
         eprintln!("Error: Main word cannot be empty");
@@ -144,8 +171,12 @@ fn run_ascii_art(main_word: &str, filler_word: &str) {
         std::process::exit(1);
     }
 
-    // Generate ASCII art
-    let art = ascii_art::word_art(main_word, filler_word);
+    // Generate ASCII art; use word_art for default spacing (0 or 1)
+    let art = if spacing == 0 || spacing == 1 {
+        ascii_art::word_art(main_word, filler_word)
+    } else {
+        ascii_art::word_art_with_spacing(main_word, filler_word, spacing)
+    };
     println!("{}", art);
 }
 
@@ -165,14 +196,14 @@ fn run_benchmark(args: &[String]) {
                 eprintln!("\nUsage: augusto bench anagram <word>");
                 std::process::exit(1);
             }
-            
+
             let input = &args[1];
-            
+
             // Benchmark anagram generation
             let stats = benchmark::benchmark_with_result("Anagram Generation", input, || {
                 anagram::letter_combinations(input)
             });
-            
+
             println!("{}", stats);
         }
         "art" | "ascii" => {
@@ -181,19 +212,17 @@ fn run_benchmark(args: &[String]) {
                 eprintln!("\nUsage: augusto bench art <main_word> <filler_word>");
                 std::process::exit(1);
             }
-            
+
             let main_word = &args[1];
             let filler_word = &args[2];
-            
+
             // Benchmark ASCII art generation
             let stats = benchmark::benchmark_operation(
                 "ASCII Art Generation",
                 &format!("{}+{}", main_word, filler_word),
-                || {
-                    ascii_art::word_art(main_word, filler_word)
-                },
+                || ascii_art::word_art(main_word, filler_word),
             );
-            
+
             println!("{}", stats);
         }
         _ => {
@@ -204,6 +233,25 @@ fn run_benchmark(args: &[String]) {
             std::process::exit(1);
         }
     }
+}
+
+/// Run comparison of multiple anagram operations
+fn run_comparison(words: &[String]) {
+    if words.is_empty() {
+        eprintln!("Error: No words provided for comparison");
+        std::process::exit(1);
+    }
+
+    let mut suite = benchmark::BenchmarkSuite::new();
+
+    for word in words {
+        let stats = benchmark::benchmark_with_result("Anagram Generation", word, || {
+            anagram::letter_combinations(word)
+        });
+        suite.add(stats);
+    }
+
+    println!("{}", suite.format_comparison());
 }
 
 #[cfg(test)]
