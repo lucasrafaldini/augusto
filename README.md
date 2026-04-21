@@ -8,12 +8,17 @@ augusto is a Rust command-line suite that allows you to interact with words in c
 
 ## Introduction
 
-Inspired by the Brazilian concrete poet Augusto de Campos, who explored the visual and sonic dimensions of language, **augusto** empowers you to deconstruct and recombine words through various operations. Currently featuring anagram generation and ASCII art creation, with plans to expand into analogic interpolations and other word transformations.
+Inspired by the Brazilian concrete poet Augusto de Campos, who explored the visual and sonic dimensions of language, **augusto** empowers you to deconstruct and recombine words through various operations. Featuring anagram generation, ASCII art, phonetic pattern analysis, palindrome detection, syllable splitting, word blending (portmanteau), and etymological root discovery.
 
 ## Features
 
 - 🔄 **Anagram Generation**: Generate all possible letter combinations of a word
 - 🎨 **ASCII Art**: Write one word using another word as filler, creating concrete poetry
+- 🔤 **Phonetic Pattern**: Visualise the vowel/consonant (V/C) rhythm of any word
+- 🔁 **Palindrome Analysis**: Detect palindromes, mirror words, and find the longest palindromic substring
+- 🔡 **Syllable Splitting**: Heuristic syllable decomposition useful for poetic rhythm
+- 🧬 **Word Blending**: Generate portmanteau fusions of two words
+- 📚 **Etymological Roots**: Identify Latin and Greek prefixes and suffixes embedded in a word
 - ⚡ **Performance Benchmarks**: Measure and analyze operation performance with detailed statistics
 - 🚀 **Fast & Efficient**: Built with Rust for optimal performance
 - 📦 **Minimal Dependencies**: Lightweight footprint (only termion for terminal interactions)
@@ -84,6 +89,33 @@ augusto art "RUST" "code"
 
 This will create ASCII art of the word "RUST" using the letters from "code" as filler.
 
+### Phonetic Pattern
+```bash
+augusto pattern "rust"
+# Compare two words:
+augusto pattern "rust" "poesia"
+```
+
+### Palindrome Analysis
+```bash
+augusto palindrome "racecar"
+```
+
+### Syllable Splitting
+```bash
+augusto syllable "beautiful"
+```
+
+### Word Blending
+```bash
+augusto blend "smoke" "fog"
+```
+
+### Etymological Roots
+```bash
+augusto roots "biology"
+```
+
 ## Usage
 
 ### Commands
@@ -138,6 +170,73 @@ augusto bench anagram "test"
 # Benchmark ASCII art
 augusto bench art "RUST" "code"
 ```
+
+#### Phonetic Pattern
+
+```bash
+augusto pattern <word> [word2]
+```
+
+**Arguments:**
+- `<word>`: The word to analyse (required)
+- `[word2]`: A second word for side-by-side comparison (optional)
+
+**Output:**
+The V/C pattern, vowel count, and consonant count of each word.
+
+#### Palindrome Analysis
+
+```bash
+augusto palindrome <word>
+```
+
+**Arguments:**
+- `<word>`: The word to analyse (required)
+
+**Output:**
+Whether the word is a palindrome, its mirror (reverse), and the longest
+palindromic substring found within it.
+
+#### Syllable Splitting
+
+```bash
+augusto syllable <word>
+```
+
+**Arguments:**
+- `<word>`: The word to split (required)
+
+**Output:**
+The word broken into syllables with a hyphen separator and total syllable count.
+Uses a heuristic onset-maximization algorithm (works well for English and
+Portuguese; results may vary for other languages).
+
+#### Word Blending (Portmanteau)
+
+```bash
+augusto blend <word1> <word2>
+```
+
+**Arguments:**
+- `<word1>`: First word (required)
+- `<word2>`: Second word (required)
+
+**Output:**
+A list of portmanteau blends, sorted by how "balanced" the blend is (closest
+to the average length of both input words appears first).
+
+#### Etymological Roots
+
+```bash
+augusto roots <word>
+```
+
+**Arguments:**
+- `<word>`: The word to analyse (required)
+
+**Output:**
+All Latin and Greek prefixes and suffixes identified in the word, along with
+their position, origin, and meaning. The database contains ~100 entries.
 
 #### Help
 
@@ -259,6 +358,92 @@ augusto bench art "LUXO" "LIXO"
 
 **Note:** Benchmark iterations automatically adjust based on input complexity. Shorter inputs run more iterations for accurate measurements.
 
+### Phonetic Pattern Examples
+
+```bash
+augusto pattern "rust"
+# Output:
+# Word:       rust
+# Pattern:    CVCC
+# Vowels:     1
+# Consonants: 3
+
+augusto pattern "rust" "poesia"
+# Output (both words):
+# Word:       rust
+# Pattern:    CVCC
+# Vowels:     1
+# Consonants: 3
+#
+# Word:       poesia
+# Pattern:    CVVCVV
+# Vowels:     4
+# Consonants: 2
+```
+
+### Palindrome Examples
+
+```bash
+augusto palindrome "racecar"
+# Output:
+# Word:             racecar
+# Is palindrome:    Yes ✓
+# Mirror (reverse): racecar
+# Longest palindromic substring: "racecar"
+
+augusto palindrome "hello"
+# Output:
+# Word:             hello
+# Is palindrome:    No
+# Mirror (reverse): olleh
+# Longest palindromic substring: "ll"
+```
+
+### Syllable Examples
+
+```bash
+augusto syllable "beautiful"
+# Output:
+# Word:      beautiful
+# Syllables: beau-ti-ful (3 syllables)
+
+augusto syllable "rust"
+# Output:
+# Word:      rust
+# Syllables: rust (1 syllable)
+```
+
+### Word Blending Examples
+
+```bash
+augusto blend "smoke" "fog"
+# Output includes "smog" (sm + og) near the top
+
+augusto blend "breakfast" "lunch"
+# Output: portmanteau words like "brunch" and many other combinations
+```
+
+### Etymological Roots Examples
+
+```bash
+augusto roots "biology"
+# Output:
+# Word: biology
+#
+# Roots found:
+#   logy       (suffix, Greek) — study of
+#   bio        (prefix, Greek) — life
+#   bi         (prefix, Latin) — two
+
+augusto roots "telescope"
+# Output:
+# Word: telescope
+#
+# Roots found:
+#   scope      (suffix, Greek) — viewing instrument
+#   tele       (prefix, Greek) — far, distant
+```
+
 ## Development
 
 ### Project Structure
@@ -270,7 +455,12 @@ augusto/
 │   │   ├── main.rs       # Entry point and CLI handling
 │   │   ├── anagram.rs    # Anagram generation logic
 │   │   ├── ascii_art.rs  # ASCII art generation logic
-│   │   └── benchmark.rs  # Performance benchmarking utilities
+│   │   ├── benchmark.rs  # Performance benchmarking utilities
+│   │   ├── pattern.rs    # Phonetic pattern (V/C) analysis
+│   │   ├── palindrome.rs # Palindrome detection, mirror, longest substring
+│   │   ├── syllable.rs   # Heuristic syllable splitting
+│   │   ├── blend.rs      # Word blending / portmanteau generation
+│   │   └── roots.rs      # Latin/Greek etymological roots database
 │   ├── Cargo.toml        # Project dependencies
 │   └── Cargo.lock        # Locked dependencies
 ├── .github/
@@ -333,7 +523,7 @@ Please ensure your contributions adhere to our [Code of Conduct](CONTRIBUTE.md).
 
 ## Roadmap
 
-### Version 0.1.x (Current)
+### Version 0.1.x
 - [x] Basic anagram generation
 - [x] ASCII art generation
 - [x] CLI interface
@@ -341,14 +531,17 @@ Please ensure your contributions adhere to our [Code of Conduct](CONTRIBUTE.md).
 - [x] Performance benchmarks
 - [x] Documentation improvements
 
-### Version 0.2.0 (Planned)
-- [ ] Word combination operations
-- [ ] Pattern matching for anagrams
+### Version 0.2.0 (Current)
+- [x] Phonetic pattern analysis (V/C patterns)
+- [x] Palindrome detection, mirror, and longest palindromic substring
+- [x] Heuristic syllable splitting
+- [x] Word blending / portmanteau generation
+- [x] Etymological roots database (Latin & Greek, ~100 entries)
+
+### Version 0.3.0 (Planned)
 - [ ] Dictionary filtering (real words only)
 - [ ] Output formatting options (JSON, CSV, etc.)
 - [ ] Interactive mode
-
-### Version 0.3.0 (Future)
 - [ ] Analogic interpolations
 - [ ] Visual word transformations
 - [ ] Multi-word operations

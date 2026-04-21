@@ -1,7 +1,9 @@
 //! Augusto - A command-line tool for creative word operations
 //!
 //! Inspired by Brazilian concrete poet Augusto de Campos, this tool provides
-//! various word manipulation operations, including anagram generation and ASCII art.
+//! various word manipulation operations, including anagram generation, ASCII
+//! art, phonetic patterns, palindromes, syllable splitting, word blending,
+//! and etymological root analysis.
 //!
 //! # Usage
 //!
@@ -14,12 +16,32 @@
 //!
 //! # Benchmark performance
 //! augusto bench anagram "word"
+//!
+//! # Phonetic pattern
+//! augusto pattern "rust"
+//!
+//! # Palindrome analysis
+//! augusto palindrome "racecar"
+//!
+//! # Syllable splitting
+//! augusto syllable "beautiful"
+//!
+//! # Word blending (portmanteau)
+//! augusto blend "smoke" "fog"
+//!
+//! # Etymological roots
+//! augusto roots "biology"
 //! ```
 
 use std::{collections::HashSet, env};
 mod anagram;
 mod ascii_art;
 mod benchmark;
+mod blend;
+mod palindrome;
+mod pattern;
+mod roots;
+mod syllable;
 
 /// Main entry point for the augusto CLI tool
 ///
@@ -28,6 +50,11 @@ mod benchmark;
 /// - `anagram <word>` - Generate all anagrams of a word
 /// - `art <main_word> <filler_word>` - Create ASCII art using one word to fill another
 /// - `bench <operation> <args...>` - Benchmark an operation and show performance stats
+/// - `pattern <word> [word2]` - Show the vowel/consonant pattern of a word
+/// - `palindrome <word>` - Analyse palindrome properties of a word
+/// - `syllable <word>` - Split a word into syllables
+/// - `blend <word1> <word2>` - Generate portmanteau blends of two words
+/// - `roots <word>` - Identify Latin/Greek etymological roots in a word
 ///
 /// # Examples
 ///
@@ -35,6 +62,11 @@ mod benchmark;
 /// augusto anagram "cat"
 /// augusto art "RUST" "code"
 /// augusto bench anagram "test"
+/// augusto pattern "rust"
+/// augusto palindrome "racecar"
+/// augusto syllable "beautiful"
+/// augusto blend "smoke" "fog"
+/// augusto roots "biology"
 /// ```
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -100,6 +132,67 @@ fn main() {
             }
             run_comparison(&args[2..]);
         }
+        "pattern" | "pat" => {
+            if args.len() < 3 {
+                eprintln!("Error: Missing word for pattern analysis");
+                eprintln!("\nUsage: augusto pattern <word> [word2]");
+                eprintln!("Example: augusto pattern \"rust\"");
+                eprintln!("         augusto pattern \"rust\" \"poesia\"");
+                std::process::exit(1);
+            }
+            if let Some(word2) = args.get(3) {
+                // Comparison mode: show two words side by side
+                println!("{}", pattern::analyze_pattern(&args[2]));
+                println!();
+                println!("{}", pattern::analyze_pattern(word2));
+            } else {
+                println!("{}", pattern::analyze_pattern(&args[2]));
+            }
+        }
+        "palindrome" | "pal" => {
+            if args.len() < 3 {
+                eprintln!("Error: Missing word for palindrome analysis");
+                eprintln!("\nUsage: augusto palindrome <word>");
+                eprintln!("Example: augusto palindrome \"racecar\"");
+                std::process::exit(1);
+            }
+            println!("{}", palindrome::analyze_palindrome(&args[2]));
+        }
+        "syllable" | "syl" | "syllables" => {
+            if args.len() < 3 {
+                eprintln!("Error: Missing word for syllable splitting");
+                eprintln!("\nUsage: augusto syllable <word>");
+                eprintln!("Example: augusto syllable \"beautiful\"");
+                std::process::exit(1);
+            }
+            println!("{}", syllable::analyze_syllables(&args[2]));
+        }
+        "blend" | "bld" => {
+            if args.len() < 4 {
+                eprintln!("Error: Two words are required for blending");
+                eprintln!("\nUsage: augusto blend <word1> <word2>");
+                eprintln!("Example: augusto blend \"smoke\" \"fog\"");
+                std::process::exit(1);
+            }
+            let blends = blend::blend_words(&args[2], &args[3]);
+            if blends.is_empty() {
+                println!("No blends could be generated for these words.");
+            } else {
+                println!("Blends of \"{}\" + \"{}\":", args[2], args[3]);
+                for b in &blends {
+                    println!("  {}", b);
+                }
+            }
+        }
+        "roots" | "etymology" | "etym" => {
+            if args.len() < 3 {
+                eprintln!("Error: Missing word for roots analysis");
+                eprintln!("\nUsage: augusto roots <word>");
+                eprintln!("Example: augusto roots \"biology\"");
+                std::process::exit(1);
+            }
+            println!("{}", roots::analyze_roots(&args[2]));
+        }
         "help" | "--help" | "-h" => {
             print_usage();
         }
@@ -128,6 +221,11 @@ fn print_usage() {
     println!("    art <main> <filler> [spacing]       Create ASCII art (optional spacing)");
     println!("    bench <operation> <args...>         Benchmark an operation with stats");
     println!("    compare <word1> <word2> ...         Compare anagram performance");
+    println!("    pattern <word> [word2]              Show vowel/consonant pattern (V/C)");
+    println!("    palindrome <word>                   Analyse palindrome properties");
+    println!("    syllable <word>                     Split a word into syllables");
+    println!("    blend <word1> <word2>               Generate portmanteau blends");
+    println!("    roots <word>                        Find Latin/Greek etymological roots");
     println!("    help                                Show this help message");
     println!();
     println!("EXAMPLES:");
@@ -137,6 +235,12 @@ fn print_usage() {
     println!("    augusto bench anagram \"test\"");
     println!("    augusto bench art \"HI\" \"rust\"");
     println!("    augusto compare \"cat\" \"test\" \"program\"");
+    println!("    augusto pattern \"rust\"");
+    println!("    augusto pattern \"rust\" \"poesia\"");
+    println!("    augusto palindrome \"racecar\"");
+    println!("    augusto syllable \"beautiful\"");
+    println!("    augusto blend \"smoke\" \"fog\"");
+    println!("    augusto roots \"biology\"");
     println!();
     println!("For backwards compatibility, you can also use:");
     println!("    augusto <word>                  (same as 'anagram' command)");
