@@ -19,6 +19,11 @@
 //! syllabification rules. It handles common English and Portuguese patterns
 //! well but does not model language-specific diphthong or hiatus rules.
 
+// Note: 'y' is intentionally excluded from the vowel set. Treating it as a
+// consonant keeps the heuristic simple and produces reasonable splits for
+// common English words (e.g., "beautiful" → beau-ti-ful). Words where 'y'
+// acts as a vowel (e.g., "rhythm") will be treated as all-consonant and
+// returned as a single syllable.
 const VOWELS: &[char] = &['a', 'e', 'i', 'o', 'u'];
 
 fn is_vowel(c: char) -> bool {

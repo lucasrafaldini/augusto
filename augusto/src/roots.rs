@@ -257,7 +257,7 @@ pub fn find_roots(word: &str) -> Vec<RootMatch<'_>> {
             }
         })
         .map(|root| {
-            // Safety: all patterns are ASCII so the byte length equals the char
+    // Note: all patterns are ASCII so the byte length equals the char
             // length. Because word_lower.starts_with / ends_with succeeded on
             // those exact bytes, the slice boundary in `word` is valid UTF-8.
             let matched = match root.position {

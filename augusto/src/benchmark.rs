@@ -301,6 +301,7 @@ pub struct BenchmarkTableRow {
 /// });
 /// println!("{}", table.format());
 /// ```
+#[derive(Default)]
 pub struct BenchmarkTable {
     rows: Vec<BenchmarkTableRow>,
 }
@@ -309,9 +310,7 @@ impl BenchmarkTable {
     /// Create an empty benchmark table.
     pub fn new() -> Self {
         Self { rows: Vec::new() }
-    }
-
-    /// Append a row to the table.
+    }    /// Append a row to the table.
     pub fn add_row(&mut self, row: BenchmarkTableRow) {
         self.rows.push(row);
     }
@@ -399,12 +398,6 @@ impl BenchmarkTable {
         out.push('\n');
 
         out
-    }
-}
-
-impl Default for BenchmarkTable {
-    fn default() -> Self {
-        Self::new()
     }
 }
 
