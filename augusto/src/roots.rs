@@ -381,4 +381,97 @@ mod tests {
         assert!(result.contains("logy"));
         assert!(result.contains("Greek"));
     }
+
+    // ── Display impl tests ────────────────────────────────────────────────────
+
+    #[test]
+    fn test_origin_display_latin() {
+        assert_eq!(Origin::Latin.to_string(), "Latin");
+    }
+
+    #[test]
+    fn test_origin_display_greek() {
+        assert_eq!(Origin::Greek.to_string(), "Greek");
+    }
+
+    #[test]
+    fn test_root_position_display_prefix() {
+        assert_eq!(RootPosition::Prefix.to_string(), "prefix");
+    }
+
+    #[test]
+    fn test_root_position_display_suffix() {
+        assert_eq!(RootPosition::Suffix.to_string(), "suffix");
+    }
+
+    // ── Additional word tests ─────────────────────────────────────────────────
+
+    #[test]
+    fn test_find_roots_thermometer() {
+        let matches = find_roots("thermometer");
+        let patterns: Vec<&str> = matches.iter().map(|m| m.root.pattern).collect();
+        assert!(patterns.contains(&"thermo"), "Should find 'thermo' prefix");
+        assert!(patterns.contains(&"meter"), "Should find 'meter' suffix");
+    }
+
+    #[test]
+    fn test_find_roots_autobiography_has_auto_prefix() {
+        let matches = find_roots("autobiography");
+        let patterns: Vec<&str> = matches.iter().map(|m| m.root.pattern).collect();
+        assert!(patterns.contains(&"auto"), "Should find 'auto' prefix");
+    }
+
+    #[test]
+    fn test_find_roots_pseudoscope() {
+        let matches = find_roots("pseudoscope");
+        let patterns: Vec<&str> = matches.iter().map(|m| m.root.pattern).collect();
+        assert!(patterns.contains(&"pseudo"), "Should find 'pseudo' prefix");
+        assert!(patterns.contains(&"scope"), "Should find 'scope' suffix");
+    }
+
+    #[test]
+    fn test_root_match_matched_field_preserves_case() {
+        // The `matched` slice should reference the original casing of the word.
+        let matches = find_roots("Telescope");
+        let tele = matches.iter().find(|m| m.root.pattern == "tele");
+        assert!(tele.is_some(), "Should find 'tele' in 'Telescope'");
+        assert_eq!(
+            tele.unwrap().matched,
+            "Tele",
+            "matched should preserve original case"
+        );
+    }
+
+    #[test]
+    fn test_find_roots_table_driven() {
+        let cases: &[(&str, &[&str])] = &[
+            ("biology", &["bio", "logy"]),
+            ("telescope", &["tele", "scope"]),
+            ("thermometer", &["thermo", "meter"]),
+        ];
+        for (word, expected_patterns) in cases {
+            let matches = find_roots(word);
+            let found: Vec<&str> = matches.iter().map(|m| m.root.pattern).collect();
+            for pat in *expected_patterns {
+                assert!(
+                    found.contains(pat),
+                    "Expected '{}' in roots of '{}', got: {:?}",
+                    pat,
+                    word,
+                    found
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn test_analyze_roots_contains_position_and_origin() {
+        let result = analyze_roots("telescope");
+        assert!(result.contains("Greek"));
+        // At least one of "prefix" or "suffix" must appear.
+        assert!(
+            result.contains("prefix") || result.contains("suffix"),
+            "Expected position label in analyze_roots output"
+        );
+    }
 }

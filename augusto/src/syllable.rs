@@ -207,4 +207,67 @@ mod tests {
         assert!(result.contains("1 syllable"));
         assert!(!result.contains("syllables"));
     }
+
+    #[test]
+    fn test_four_syllables_computador() {
+        // "computador" (Portuguese for "computer"):
+        // groups → C[c], V[o], C[mp], V[u], C[t], V[a], C[d], V[o], C[r]
+        // C[mp] between V[o] and V[u]: 2 consonants → break after first → split at index 3
+        // C[t]  between V[u] and V[a]: 1 consonant  → break before it  → split at index 5
+        // C[d]  between V[a] and V[o]: 1 consonant  → break before it  → split at index 7
+        // C[r]  at end: no following vowel           → no break
+        // Result: ["com", "pu", "ta", "dor"]
+        let syllables = split_syllables("computador");
+        assert_eq!(syllables.len(), 4);
+        assert_eq!(syllables, vec!["com", "pu", "ta", "dor"]);
+    }
+
+    #[test]
+    fn test_word_with_no_vowels_is_one_syllable() {
+        // "rhythm" has no ASCII vowels → single consonant group → no breaks
+        let syllables = split_syllables("rhythm");
+        assert_eq!(syllables.len(), 1);
+        assert_eq!(syllables, vec!["rhythm"]);
+    }
+
+    #[test]
+    fn test_consonant_cluster_at_start_no_split() {
+        // "street": C[str], V[ee], C[t]
+        // The leading consonant cluster has no preceding vowel → no break there.
+        // The trailing C[t] has no following vowel → no break there.
+        let syllables = split_syllables("street");
+        assert_eq!(syllables.len(), 1);
+        assert_eq!(syllables, vec!["street"]);
+    }
+
+    #[test]
+    fn test_double_consonant_splits_after_first() {
+        // "butter": C[b], V[u], C[tt], V[e], C[r]
+        // C[tt] between two vowels: cluster_len=2 → break after first → "but" | "ter"
+        assert_eq!(split_syllables("butter"), vec!["but", "ter"]);
+    }
+
+    #[test]
+    fn test_all_vowels_word_is_one_syllable() {
+        // Pure vowel string has one group → no consonant clusters → no breaks
+        let syllables = split_syllables("aeiou");
+        assert_eq!(syllables.len(), 1);
+        assert_eq!(syllables, vec!["aeiou"]);
+    }
+
+    #[test]
+    fn test_syllable_table_driven() {
+        let cases: &[(&str, &[&str])] = &[
+            ("cat", &["cat"]),
+            ("open", &["o", "pen"]),
+            ("program", &["prog", "ram"]),
+            ("computer", &["com", "pu", "ter"]),
+        ];
+        for (word, expected) in cases {
+            let result = split_syllables(word);
+            let expected_owned: Vec<String> =
+                expected.iter().map(|s| s.to_string()).collect();
+            assert_eq!(result, expected_owned, "Mismatch for '{}'", word);
+        }
+    }
 }

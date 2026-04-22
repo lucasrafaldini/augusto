@@ -97,4 +97,67 @@ mod tests {
         let result = analyze_pattern("rust");
         assert!(result.contains("rust"));
     }
+
+    #[test]
+    fn test_phonetic_pattern_all_vowels() {
+        assert_eq!(phonetic_pattern("aeiou"), "VVVVV");
+    }
+
+    #[test]
+    fn test_phonetic_pattern_all_consonants() {
+        // "rhythm" has no standard ASCII vowels
+        assert_eq!(phonetic_pattern("rhythm"), "CCCCCC");
+    }
+
+    #[test]
+    fn test_phonetic_pattern_digits_preserved() {
+        assert_eq!(phonetic_pattern("r2d2"), "C2C2");
+    }
+
+    #[test]
+    fn test_phonetic_pattern_length_equals_input() {
+        // The pattern is built char-by-char so its char count must equal the
+        // input's char count for purely ASCII inputs.
+        for word in &["rust", "hello", "art", "cat", "rhythm"] {
+            assert_eq!(
+                phonetic_pattern(word).chars().count(),
+                word.chars().count(),
+                "Pattern char-count should match word char-count for '{}'",
+                word
+            );
+        }
+    }
+
+    #[test]
+    fn test_phonetic_pattern_various_words() {
+        let cases = [
+            ("hello", "CVCCV"),
+            ("cat", "CVC"),
+            ("rust", "CVCC"),
+            ("art", "VCC"),
+            ("bit", "CVC"),
+        ];
+        for (word, expected) in &cases {
+            assert_eq!(
+                phonetic_pattern(word),
+                *expected,
+                "Mismatch for word '{}'",
+                word
+            );
+        }
+    }
+
+    #[test]
+    fn test_analyze_pattern_all_vowels_zero_consonants() {
+        let result = analyze_pattern("aeiou");
+        assert!(result.contains("Vowels:     5"));
+        assert!(result.contains("Consonants: 0"));
+    }
+
+    #[test]
+    fn test_analyze_pattern_all_consonants_zero_vowels() {
+        let result = analyze_pattern("rhythm");
+        assert!(result.contains("Vowels:     0"));
+        assert!(result.contains("Consonants: 6"));
+    }
 }

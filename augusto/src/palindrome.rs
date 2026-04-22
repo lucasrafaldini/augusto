@@ -258,4 +258,67 @@ mod tests {
         let (_, l) = expand_palindrome(&chars, 0, 1);
         assert_eq!(l, 0);
     }
+
+    #[test]
+    fn test_is_palindrome_two_char_same() {
+        assert!(is_palindrome("aa"));
+        assert!(is_palindrome("zz"));
+    }
+
+    #[test]
+    fn test_is_palindrome_two_char_different() {
+        assert!(!is_palindrome("ab"));
+        assert!(!is_palindrome("xy"));
+    }
+
+    #[test]
+    fn test_is_palindrome_table_driven() {
+        let cases = [
+            ("racecar", true),
+            ("level", true),
+            ("noon", true),
+            ("hello", false),
+            ("world", false),
+            ("rust", false),
+        ];
+        for (word, expected) in &cases {
+            assert_eq!(
+                is_palindrome(word),
+                *expected,
+                "is_palindrome({:?}) should be {}",
+                word,
+                expected
+            );
+        }
+    }
+
+    #[test]
+    fn test_mirror_preserves_digits_and_symbols() {
+        assert_eq!(mirror("r2d2"), "2d2r");
+        assert_eq!(mirror("ab cd"), "dc ba");
+    }
+
+    #[test]
+    fn test_longest_palindromic_substring_all_same() {
+        // "aaaa" — the whole string is the longest palindrome.
+        assert_eq!(longest_palindromic_substring("aaaa"), "aaaa");
+    }
+
+    #[test]
+    fn test_longest_palindromic_substring_even_abba() {
+        assert_eq!(longest_palindromic_substring("abba"), "abba");
+    }
+
+    #[test]
+    fn test_longest_palindromic_substring_portuguese_arara() {
+        // "arara" is a palindrome in Portuguese (macaw).
+        assert_eq!(longest_palindromic_substring("arara"), "arara");
+    }
+
+    #[test]
+    fn test_analyze_palindrome_single_char_no_lps_line() {
+        // For a single character the LPS section should be omitted.
+        let result = analyze_palindrome("a");
+        assert!(!result.contains("Longest palindromic substring"));
+    }
 }

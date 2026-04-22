@@ -264,6 +264,204 @@ impl Default for BenchmarkSuite {
     }
 }
 
+// ── Benchmark table ───────────────────────────────────────────────────────────
+
+/// A single row in a benchmark results table, capturing one operation and its
+/// example output so results can be compared side by side.
+#[derive(Debug, Clone)]
+pub struct BenchmarkTableRow {
+    /// Human-readable name of the operation (e.g., "Phonetic Pattern").
+    pub operation: String,
+    /// Input word(s) used for the measurement.
+    pub input: String,
+    /// Short sample of the transformed output (e.g., `"CVCC"`, `"com-pu-ter"`).
+    pub output_example: String,
+    /// Average measured duration per iteration.
+    pub avg_duration: Duration,
+}
+
+/// A formatted ASCII table comparing benchmark results across multiple
+/// operations and input words.
+///
+/// Each row shows the operation name, the input, an example of the
+/// transformed output, and the average execution time.
+///
+/// # Examples
+///
+/// ```
+/// use augusto::benchmark::{BenchmarkTable, BenchmarkTableRow};
+/// use std::time::Duration;
+///
+/// let mut table = BenchmarkTable::new();
+/// table.add_row(BenchmarkTableRow {
+///     operation:      "Phonetic Pattern".to_string(),
+///     input:          "rust".to_string(),
+///     output_example: "CVCC".to_string(),
+///     avg_duration:   Duration::from_micros(1),
+/// });
+/// println!("{}", table.format());
+/// ```
+pub struct BenchmarkTable {
+    rows: Vec<BenchmarkTableRow>,
+}
+
+impl BenchmarkTable {
+    /// Create an empty benchmark table.
+    pub fn new() -> Self {
+        Self { rows: Vec::new() }
+    }
+
+    /// Append a row to the table.
+    pub fn add_row(&mut self, row: BenchmarkTableRow) {
+        self.rows.push(row);
+    }
+
+    /// Render the table as a formatted ASCII string with aligned columns.
+    ///
+    /// Column widths are determined dynamically so that every cell fits without
+    /// truncation.
+    pub fn format(&self) -> String {
+        if self.rows.is_empty() {
+            return String::from("No benchmark results.\n");
+        }
+
+        // Determine column widths dynamically.
+        let op_w = self
+            .rows
+            .iter()
+            .map(|r| r.operation.len())
+            .max()
+            .unwrap_or(0)
+            .max("Operation".len());
+        let in_w = self
+            .rows
+            .iter()
+            .map(|r| r.input.len())
+            .max()
+            .unwrap_or(0)
+            .max("Input".len());
+        let ex_w = self
+            .rows
+            .iter()
+            .map(|r| r.output_example.len())
+            .max()
+            .unwrap_or(0)
+            .max("Output example".len());
+        let tm_w = self
+            .rows
+            .iter()
+            .map(|r| BenchmarkStats::format_duration(r.avg_duration).len())
+            .max()
+            .unwrap_or(0)
+            .max("Avg time".len());
+
+        let sep = format!(
+            "+-{}-+-{}-+-{}-+-{}-+",
+            "-".repeat(op_w),
+            "-".repeat(in_w),
+            "-".repeat(ex_w),
+            "-".repeat(tm_w),
+        );
+
+        let mut out = String::new();
+        out.push_str(&sep);
+        out.push('\n');
+        out.push_str(&format!(
+            "| {:<op_w$} | {:<in_w$} | {:<ex_w$} | {:<tm_w$} |",
+            "Operation",
+            "Input",
+            "Output example",
+            "Avg time",
+            op_w = op_w,
+            in_w = in_w,
+            ex_w = ex_w,
+            tm_w = tm_w
+        ));
+        out.push('\n');
+        out.push_str(&sep);
+        out.push('\n');
+
+        for row in &self.rows {
+            out.push_str(&format!(
+                "| {:<op_w$} | {:<in_w$} | {:<ex_w$} | {:<tm_w$} |",
+                row.operation,
+                row.input,
+                row.output_example,
+                BenchmarkStats::format_duration(row.avg_duration),
+                op_w = op_w,
+                in_w = in_w,
+                ex_w = ex_w,
+                tm_w = tm_w
+            ));
+            out.push('\n');
+        }
+        out.push_str(&sep);
+        out.push('\n');
+
+        out
+    }
+}
+
+impl Default for BenchmarkTable {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// Benchmark a closure and return a [`BenchmarkTableRow`] ready to be added to
+/// a [`BenchmarkTable`].
+///
+/// # Arguments
+///
+/// * `operation`      - Human-readable operation name shown in the table.
+/// * `input`          - The input string associated with this measurement.
+/// * `output_example` - A short sample of the transformed output to display.
+/// * `f`              - The closure to benchmark (called many times).
+///
+/// # Examples
+///
+/// ```
+/// use augusto::benchmark::benchmark_to_table_row;
+///
+/// let row = benchmark_to_table_row("Pattern", "rust", "CVCC", || {
+///     let _ = "rust".len();
+/// });
+/// assert_eq!(row.operation, "Pattern");
+/// assert_eq!(row.output_example, "CVCC");
+/// ```
+pub fn benchmark_to_table_row<F, S>(
+    operation: &str,
+    input: &str,
+    output_example: S,
+    mut f: F,
+) -> BenchmarkTableRow
+where
+    F: FnMut(),
+    S: Into<String>,
+{
+    // Warm-up run to avoid cold-start bias.
+    f();
+
+    let iterations = calculate_iterations(input);
+    let start = Instant::now();
+    for _ in 0..iterations {
+        f();
+    }
+    let elapsed = start.elapsed();
+    let avg_duration = if iterations > 0 {
+        elapsed / iterations as u32
+    } else {
+        elapsed
+    };
+
+    BenchmarkTableRow {
+        operation: operation.to_string(),
+        input: input.to_string(),
+        output_example: output_example.into(),
+        avg_duration,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -349,5 +547,85 @@ mod tests {
         let comparison = suite.format_comparison();
         assert!(comparison.contains("op1"));
         assert!(comparison.contains("test"));
+    }
+
+    // ── BenchmarkTable tests ──────────────────────────────────────────────────
+
+    #[test]
+    fn test_benchmark_table_empty() {
+        let table = BenchmarkTable::new();
+        assert!(table.format().contains("No benchmark results"));
+    }
+
+    #[test]
+    fn test_benchmark_table_default_is_empty() {
+        let table = BenchmarkTable::default();
+        assert!(table.format().contains("No benchmark results"));
+    }
+
+    #[test]
+    fn test_benchmark_table_single_row_contains_data() {
+        let mut table = BenchmarkTable::new();
+        table.add_row(BenchmarkTableRow {
+            operation: "Pattern".to_string(),
+            input: "rust".to_string(),
+            output_example: "CVCC".to_string(),
+            avg_duration: Duration::from_micros(5),
+        });
+        let rendered = table.format();
+        assert!(rendered.contains("Pattern"));
+        assert!(rendered.contains("rust"));
+        assert!(rendered.contains("CVCC"));
+    }
+
+    #[test]
+    fn test_benchmark_table_has_headers() {
+        let mut table = BenchmarkTable::new();
+        table.add_row(BenchmarkTableRow {
+            operation: "X".to_string(),
+            input: "y".to_string(),
+            output_example: "z".to_string(),
+            avg_duration: Duration::from_nanos(100),
+        });
+        let rendered = table.format();
+        assert!(rendered.contains("Operation"));
+        assert!(rendered.contains("Input"));
+        assert!(rendered.contains("Output example"));
+        assert!(rendered.contains("Avg time"));
+    }
+
+    #[test]
+    fn test_benchmark_table_multiple_rows() {
+        let mut table = BenchmarkTable::new();
+        for (op, inp, ex) in &[
+            ("Pattern", "rust", "CVCC"),
+            ("Palindrome", "racecar", "palindrome ✓"),
+            ("Syllable", "computer", "com-pu-ter"),
+        ] {
+            table.add_row(BenchmarkTableRow {
+                operation: op.to_string(),
+                input: inp.to_string(),
+                output_example: ex.to_string(),
+                avg_duration: Duration::from_micros(10),
+            });
+        }
+        let rendered = table.format();
+        assert!(rendered.contains("Pattern"));
+        assert!(rendered.contains("Palindrome"));
+        assert!(rendered.contains("Syllable"));
+        assert!(rendered.contains("com-pu-ter"));
+    }
+
+    #[test]
+    fn test_benchmark_to_table_row_fields() {
+        let row = benchmark_to_table_row("Pattern", "rust", "CVCC", || {
+            let _ = "rust".len();
+        });
+        assert_eq!(row.operation, "Pattern");
+        assert_eq!(row.input, "rust");
+        assert_eq!(row.output_example, "CVCC");
+        // avg_duration must be non-negative (always true for Duration, just
+        // assert it is accessible and the struct was constructed properly).
+        let _ = row.avg_duration.as_nanos();
     }
 }

@@ -154,4 +154,62 @@ mod tests {
             prev_dist = dist;
         }
     }
+
+    #[test]
+    fn test_blend_brunch() {
+        // "br" (prefix of "breakfast") + "unch" (suffix of "lunch") = "brunch"
+        let blends = blend_words("breakfast", "lunch");
+        assert!(
+            blends.contains(&"brunch".to_string()),
+            "Expected 'brunch' in blends of breakfast+lunch, got: {:?}",
+            blends
+        );
+    }
+
+    #[test]
+    fn test_blend_motel() {
+        // "mo" (prefix of "motor") + "tel" (suffix of "hotel") = "motel"
+        let blends = blend_words("motor", "hotel");
+        assert!(
+            blends.contains(&"motel".to_string()),
+            "Expected 'motel' in blends of motor+hotel, got: {:?}",
+            blends
+        );
+    }
+
+    #[test]
+    fn test_blend_all_shorter_than_concatenation() {
+        // Every blend must be strictly shorter than the full concatenation.
+        let blends = blend_words("hello", "world");
+        let max_len = "hello".len() + "world".len();
+        for b in &blends {
+            assert!(
+                b.len() < max_len,
+                "Blend '{}' is not shorter than full concatenation",
+                b
+            );
+        }
+    }
+
+    #[test]
+    fn test_blend_min_length_two() {
+        // Every blend must contribute at least one character from each word,
+        // so the minimum possible length is 2.
+        let blends = blend_words("hello", "world");
+        for b in &blends {
+            assert!(b.len() >= 2, "Blend '{}' is shorter than 2 chars", b);
+        }
+    }
+
+    #[test]
+    fn test_blend_count_bounded_short_words() {
+        // For two 2-char words there is at most 1 valid split index per word,
+        // giving at most 2 distinct blends before deduplication.
+        let blends = blend_words("ab", "cd");
+        assert!(
+            blends.len() <= 4,
+            "Expected at most 4 blends for 2-char words, got: {:?}",
+            blends
+        );
+    }
 }
