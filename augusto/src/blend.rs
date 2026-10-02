@@ -108,7 +108,11 @@ mod tests {
     fn test_blend_is_deduplicated() {
         let blends = blend_words("ab", "cd");
         let unique: HashSet<&String> = blends.iter().collect();
-        assert_eq!(blends.len(), unique.len(), "Blend list should have no duplicates");
+        assert_eq!(
+            blends.len(),
+            unique.len(),
+            "Blend list should have no duplicates"
+        );
     }
 
     #[test]
@@ -137,7 +141,11 @@ mod tests {
         // Lowercase versions of all blends should be unique.
         let lower: Vec<String> = blends.iter().map(|s| s.to_lowercase()).collect();
         let unique: HashSet<&String> = lower.iter().collect();
-        assert_eq!(lower.len(), unique.len(), "Case-insensitive duplicates found");
+        assert_eq!(
+            lower.len(),
+            unique.len(),
+            "Case-insensitive duplicates found"
+        );
     }
 
     #[test]

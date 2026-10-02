@@ -62,7 +62,11 @@ fn group_chars(chars: &[char]) -> Vec<CharGroup> {
         while i < chars.len() && is_vowel(chars[i]) == vowel {
             i += 1;
         }
-        groups.push(CharGroup { kind, start, end: i });
+        groups.push(CharGroup {
+            kind,
+            start,
+            end: i,
+        });
     }
     groups
 }
@@ -270,8 +274,7 @@ mod tests {
         ];
         for (word, expected) in cases {
             let result = split_syllables(word);
-            let expected_owned: Vec<String> =
-                expected.iter().map(|s| s.to_string()).collect();
+            let expected_owned: Vec<String> = expected.iter().map(|s| s.to_string()).collect();
             assert_eq!(result, expected_owned, "Mismatch for '{}'", word);
         }
     }

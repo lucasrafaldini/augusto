@@ -460,10 +460,7 @@ fn run_benchmark(args: &[String]) {
             let stats = benchmark::benchmark_operation("Roots Analysis", input, || {
                 roots::find_roots(input);
             });
-            println!(
-                "Output example: roots of \"{}\" → [{}]",
-                input, example
-            );
+            println!("Output example: roots of \"{}\" → [{}]", input, example);
             println!("{}", stats);
         }
         "table" => {
@@ -639,14 +636,9 @@ fn run_bench_table() {
     // ── Phonetic pattern ─────────────────────────────────────────────────────
     for word in &["rust", "hello", "poesia", "beautiful"] {
         let example = pattern::phonetic_pattern(word);
-        let row = benchmark::benchmark_to_table_row(
-            "Phonetic Pattern",
-            word,
-            example,
-            || {
-                pattern::phonetic_pattern(word);
-            },
-        );
+        let row = benchmark::benchmark_to_table_row("Phonetic Pattern", word, example, || {
+            pattern::phonetic_pattern(word);
+        });
         table.add_row(row);
     }
 
@@ -657,16 +649,11 @@ fn run_bench_table() {
         } else {
             format!("mirror: {}", palindrome::mirror(word))
         };
-        let row = benchmark::benchmark_to_table_row(
-            "Palindrome",
-            word,
-            example,
-            || {
-                palindrome::is_palindrome(word);
-                palindrome::mirror(word);
-                palindrome::longest_palindromic_substring(word);
-            },
-        );
+        let row = benchmark::benchmark_to_table_row("Palindrome", word, example, || {
+            palindrome::is_palindrome(word);
+            palindrome::mirror(word);
+            palindrome::longest_palindromic_substring(word);
+        });
         table.add_row(row);
     }
 
@@ -674,14 +661,9 @@ fn run_bench_table() {
     for word in &["rust", "computer", "beautiful", "program"] {
         let syllables = syllable::split_syllables(word);
         let example = syllables.join("-");
-        let row = benchmark::benchmark_to_table_row(
-            "Syllable Split",
-            word,
-            example,
-            || {
-                syllable::split_syllables(word);
-            },
-        );
+        let row = benchmark::benchmark_to_table_row("Syllable Split", word, example, || {
+            syllable::split_syllables(word);
+        });
         table.add_row(row);
     }
 
@@ -699,14 +681,9 @@ fn run_bench_table() {
             .cloned()
             .unwrap_or_else(|| "(none)".to_string());
         let input_label = format!("{}+{}", a, b);
-        let row = benchmark::benchmark_to_table_row(
-            "Word Blend",
-            &input_label,
-            example,
-            || {
-                blend::blend_words(a, b);
-            },
-        );
+        let row = benchmark::benchmark_to_table_row("Word Blend", &input_label, example, || {
+            blend::blend_words(a, b);
+        });
         table.add_row(row);
     }
 
@@ -718,14 +695,9 @@ fn run_bench_table() {
             .map(|m| m.root.pattern)
             .collect::<Vec<_>>()
             .join("+");
-        let row = benchmark::benchmark_to_table_row(
-            "Roots Analysis",
-            word,
-            example,
-            || {
-                roots::find_roots(word);
-            },
-        );
+        let row = benchmark::benchmark_to_table_row("Roots Analysis", word, example, || {
+            roots::find_roots(word);
+        });
         table.add_row(row);
     }
 

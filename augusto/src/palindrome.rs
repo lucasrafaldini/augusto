@@ -62,10 +62,7 @@ fn expand_palindrome(chars: &[char], left_start: usize, right_start: usize) -> (
     let mut best_start = left_start;
     let mut best_len = 0usize;
 
-    while left >= 0
-        && right < n
-        && chars[left as usize].eq_ignore_ascii_case(&chars[right])
-    {
+    while left >= 0 && right < n && chars[left as usize].eq_ignore_ascii_case(&chars[right]) {
         let len = right - left as usize + 1;
         if len > best_len {
             best_start = left as usize;
@@ -170,10 +167,7 @@ pub fn analyze_palindrome(word: &str) -> String {
     ));
     output.push_str(&format!("Mirror (reverse): {}\n", reversed));
     if word.len() > 1 {
-        output.push_str(&format!(
-            "Longest palindromic substring: \"{}\"",
-            longest
-        ));
+        output.push_str(&format!("Longest palindromic substring: \"{}\"", longest));
     }
     output
 }
