@@ -122,6 +122,42 @@ impl AnimationShape {
     }
 }
 
+/// Border/frame configuration for animated LED-style ticker border
+#[derive(Debug, Clone)]
+pub struct BorderConfig {
+    /// Enable the animated border
+    pub enabled: bool,
+    /// Border text to scroll (default: "AUGUSTO")
+    pub text: String,
+    /// Separator between repeated text (default: " ⛧ ")
+    pub separator: String,
+    /// Scroll speed in frames per character (default: 2)
+    pub scroll_speed: usize,
+    /// Border background color (ANSI 256 color code, default: 234 dark gray)
+    pub bg_color: u8,
+    /// Border foreground/text color (ANSI 256 color code, default: 231 white)
+    pub fg_color: u8,
+    /// Border thickness (1=single line, 2=double, default: 1)
+    pub thickness: usize,
+    /// Animation direction (1=forward, -1=reverse, default: 1)
+    pub direction: i32,
+}
+
+impl Default for BorderConfig {
+    fn default() -> Self {
+        Self {
+            enabled: true,
+            text: "AUGUSTO".to_string(),
+            separator: " ⛧ ".to_string(),
+            scroll_speed: 2,
+            bg_color: 234,
+            fg_color: 231,
+            thickness: 1,
+            direction: 1,
+        }
+    }
+}
+
 /// Configuration for animation
 #[derive(Debug, Clone)]
 pub struct AnimationConfig {
@@ -133,6 +169,7 @@ pub struct AnimationConfig {
     pub color: bool,
     pub width: usize,
     pub height: usize,
+    pub border: BorderConfig,
 }
 
 impl Default for AnimationConfig {
@@ -146,6 +183,7 @@ impl Default for AnimationConfig {
             color: false,
             width: 80,
             height: 40,
+            border: BorderConfig::default(),
         }
     }
 }
@@ -167,44 +205,76 @@ const RESET: &str = "\x1b[0m";
 /// Background color for the AUGUSTO title frame
 const BG_COLOR: &str = "\x1b[48;5;234m"; // Dark gray background
 
-/// Add a decorative coin-style frame around the animation output
-/// with "AUGUSTO" repeated on all four borders like Greek/Roman coins
-fn add_frame(output: &str, width: usize, _config: &AnimationConfig) -> String {
-    const COIN_TEXT: &str = "AUGUSTO";
-    const COIN_LEN: usize = 7; // "AUGUSTO".len()
+/// Generate animated LED ticker border frame
+fn add_frame(output: &str, width: usize, config: &AnimationConfig, frame: usize) -> String {
+    let border = &config.border;
     
-    let border_bg = format!("{}", BG_COLOR);
-    let border_fg = "\x1b[38;5;231m"; // White text for border
+    if !border.enabled {
+        return output.to_string();
+    }
+    
+    let border_bg = format!("\x1b[48;5;{}m", border.bg_color);
+    let border_fg = format!("\x1b[38;5;{}m", border.fg_color);
     let reset = RESET;
     
-    // Create top/bottom border with repeated "AUGUSTO"
-    let repeat_count = (width + COIN_LEN - 1) / COIN_LEN;
-    let coin_pattern: String = COIN_TEXT.repeat(repeat_count);
-    let coin_pattern = &coin_pattern[..width.min(coin_pattern.len())];
+    // Build the ticker text with separators
+    let ticker_unit = format!("{}{}", border.text, border.separator);
+    let ticker_len = ticker_unit.len();
     
-    let top_border = format!("{}{}{}╭{}╮{}\n", border_bg, border_fg, " ".repeat(0), coin_pattern, reset);
-    let bottom_border = format!("{}{}{}╰{}╯{}\n", border_bg, border_fg, " ".repeat(0), coin_pattern, reset);
+    // Calculate scroll offset based on frame and scroll_speed
+    let frames_per_char = border.scroll_speed.max(1) as isize;
+    let direction = border.direction as isize;
+    let scroll_offset = ((frame as isize / frames_per_char) * direction).rem_euclid(ticker_len as isize) as usize;
     
-    // Side borders - vertical "AUGUSTO" 
-    let side_text = COIN_TEXT;
+    // Generate infinite ticker pattern
+    let repeat_count = (width + ticker_len) / ticker_len + 2;
+    let full_ticker: String = ticker_unit.repeat(repeat_count);
+    let full_ticker_chars: Vec<char> = full_ticker.chars().collect();
+    let full_len = full_ticker_chars.len();
+    
+    // Get visible portion of ticker for top/bottom borders
+    let top_ticker: String = full_ticker_chars[scroll_offset..]
+        .iter()
+        .chain(full_ticker_chars.iter())
+        .take(width)
+        .collect();
+    
+    // Bottom border scrolls in opposite direction for cool effect
+    let bottom_offset = (scroll_offset + width / 2) % ticker_len;
+    let bottom_ticker: String = full_ticker_chars[bottom_offset..]
+        .iter()
+        .chain(full_ticker_chars.iter())
+        .take(width)
+        .collect();
+    
+    // Corner pieces based on thickness
+    let (top_left, top_right, bottom_left, bottom_right) = if border.thickness >= 2 {
+        ("╔", "╗", "╚", "╝")
+    } else {
+        ("╭", "╮", "╰", "╯")
+    };
+    
+    let top_border = format!("{}{}{}{}{}{}\n", border_bg, border_fg, top_left, top_ticker, top_right, reset);
+    let bottom_border = format!("{}{}{}{}{}{}\n", border_bg, border_fg, bottom_left, bottom_ticker, bottom_right, reset);
+    
+    // Side borders - vertical scrolling ticker
+    let lines: Vec<&str> = output.lines().collect();
     
     let mut framed = String::new();
     framed.push_str(&top_border);
-    
-    // Add side borders to each line of the animation
-    let lines: Vec<&str> = output.lines().collect();
-    let anim_height = lines.len();
     
     for (i, line) in lines.iter().enumerate() {
         let visible_width = strip_ansi_codes(line).chars().count();
         let padding = if visible_width < width { width - visible_width } else { 0 };
         
-        // Get character for left/right border (cycle through AUGUSTO)
-        let left_char = side_text.chars().nth(i % COIN_LEN).unwrap_or('A');
-        let right_char = side_text.chars().nth((COIN_LEN - 1 - (i % COIN_LEN)) % COIN_LEN).unwrap_or('O');
+        // Vertical ticker position for this line (offset by line index for wave effect)
+        let side_offset = (scroll_offset + i * direction as usize) % ticker_len;
+        let left_char = full_ticker_chars[side_offset % full_len];
+        let right_char = full_ticker_chars[(side_offset + ticker_len / 2) % full_len];
         
-        let left_border = format!("{}{}{}{}", border_bg, border_fg, left_char, reset);
-        let right_border = format!("{}{}{}{}", border_bg, border_fg, right_char, reset);
+        let side_bg = format!("{}{}", border_bg, border_fg);
+        let left_border = format!("{}{}{}", side_bg, left_char, reset);
+        let right_border = format!("{}{}{}", side_bg, right_char, reset);
         
         let padded_line = format!("{}│{}{}│{}\n", left_border, line, " ".repeat(padding), right_border);
         framed.push_str(&padded_line);
@@ -725,8 +795,8 @@ pub fn animate(config: AnimationConfig) {
             _ => render_edges(&edges, (rx, ry, rz), &config, frame),
         };
 
-        // Add decorative frame with AUGUSTO title
-        let framed_output = add_frame(&frame_output, config.width, &config);
+        // Add animated LED ticker border
+        let framed_output = add_frame(&frame_output, config.width, &config, frame);
 
         // Move cursor to top-left and print frame
         print!("\x1b[H{}", framed_output);
@@ -869,6 +939,7 @@ mod tests {
             color: false,
             width: 40,
             height: 20,
+            border: BorderConfig::default(),
         };
 
         let frame = get_frame(&config, 0);

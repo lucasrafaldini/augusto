@@ -520,6 +520,16 @@ fn run_animation(args: &[String]) {
     let mut filler: Option<String> = None;
     let mut width = 80usize;
     let mut height = 40usize;
+    
+    // Border options
+    let mut border_enabled = true;
+    let mut border_text = "AUGUSTO".to_string();
+    let mut border_separator = " ⛧ ".to_string();
+    let mut border_scroll_speed = 2usize;
+    let mut border_bg_color = 234u8;
+    let mut border_fg_color = 231u8;
+    let mut border_thickness = 1usize;
+    let mut border_direction = 1i32;
 
     let mut i = 2;
     while i < args.len() {
@@ -593,10 +603,108 @@ fn run_animation(args: &[String]) {
                     std::process::exit(1);
                 }
             }
+            // Border options
+            "--border-text" => {
+                if i + 1 < args.len() {
+                    border_text = args[i + 1].clone();
+                    i += 2;
+                } else {
+                    eprintln!("Error: --border-text requires a value");
+                    std::process::exit(1);
+                }
+            }
+            "--border-separator" => {
+                if i + 1 < args.len() {
+                    border_separator = args[i + 1].clone();
+                    i += 2;
+                } else {
+                    eprintln!("Error: --border-separator requires a value");
+                    std::process::exit(1);
+                }
+            }
+            "--border-speed" => {
+                if i + 1 < args.len() {
+                    if let Ok(val) = args[i + 1].parse::<usize>() {
+                        border_scroll_speed = val;
+                    } else {
+                        eprintln!("Error: Invalid border speed value '{}'", args[i + 1]);
+                        std::process::exit(1);
+                    }
+                    i += 2;
+                } else {
+                    eprintln!("Error: --border-speed requires a value");
+                    std::process::exit(1);
+                }
+            }
+            "--border-bg" => {
+                if i + 1 < args.len() {
+                    if let Ok(val) = args[i + 1].parse::<u8>() {
+                        border_bg_color = val;
+                    } else {
+                        eprintln!("Error: Invalid border background color '{}'", args[i + 1]);
+                        std::process::exit(1);
+                    }
+                    i += 2;
+                } else {
+                    eprintln!("Error: --border-bg requires a value (0-255)");
+                    std::process::exit(1);
+                }
+            }
+            "--border-fg" => {
+                if i + 1 < args.len() {
+                    if let Ok(val) = args[i + 1].parse::<u8>() {
+                        border_fg_color = val;
+                    } else {
+                        eprintln!("Error: Invalid border foreground color '{}'", args[i + 1]);
+                        std::process::exit(1);
+                    }
+                    i += 2;
+                } else {
+                    eprintln!("Error: --border-fg requires a value (0-255)");
+                    std::process::exit(1);
+                }
+            }
+            "--border-thickness" => {
+                if i + 1 < args.len() {
+                    if let Ok(val) = args[i + 1].parse::<usize>() {
+                        border_thickness = val;
+                    } else {
+                        eprintln!("Error: Invalid border thickness '{}'", args[i + 1]);
+                        std::process::exit(1);
+                    }
+                    i += 2;
+                } else {
+                    eprintln!("Error: --border-thickness requires a value");
+                    std::process::exit(1);
+                }
+            }
+            "--border-direction" => {
+                if i + 1 < args.len() {
+                    if let Ok(val) = args[i + 1].parse::<i32>() {
+                        if val == 1 || val == -1 {
+                            border_direction = val;
+                        } else {
+                            eprintln!("Error: --border-direction must be 1 or -1");
+                            std::process::exit(1);
+                        }
+                    } else {
+                        eprintln!("Error: Invalid border direction '{}'", args[i + 1]);
+                        std::process::exit(1);
+                    }
+                    i += 2;
+                } else {
+                    eprintln!("Error: --border-direction requires a value (1 or -1)");
+                    std::process::exit(1);
+                }
+            }
+            "--no-border" => {
+                border_enabled = false;
+                i += 1;
+            }
             _ => {
                 eprintln!("Error: Unknown option '{}'", args[i]);
                 eprintln!(
-                    "Supported options: --speed, --frames, --color, --filler, --width, --height"
+                    "Supported options: --speed, --frames, --color, --filler, --width, --height, --border-text, --border-separator, --border-speed, --border-bg, --border-fg, --border-thickness, --border-direction, --no-border"
                 );
                 std::process::exit(1);
             }
@@ -612,6 +720,17 @@ fn run_animation(args: &[String]) {
         }
     };
 
+    let border_config = animation::BorderConfig {
+        enabled: border_enabled,
+        text: border_text,
+        separator: border_separator,
+        scroll_speed: border_scroll_speed,
+        bg_color: border_bg_color,
+        fg_color: border_fg_color,
+        thickness: border_thickness,
+        direction: border_direction,
+    };
+
     let config = animation::AnimationConfig {
         shape,
         word: word.clone(),
@@ -621,6 +740,7 @@ fn run_animation(args: &[String]) {
         color,
         width,
         height,
+        border: border_config,
     };
 
     animation::animate(config);
