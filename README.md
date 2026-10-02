@@ -407,6 +407,46 @@ augusto bench art "LUXO" "LIXO"
 
 **Note:** Benchmark iterations automatically adjust based on input complexity. Shorter inputs run more iterations for accurate measurements.
 
+### Benchmark Table (All Operations)
+
+Run `augusto bench table` to see a comprehensive comparison of all operations:
+
+```bash
+augusto bench table
+```
+
+Output example:
+```
+╔═══════════════════════════════════════════════════════════════╗
+║         BENCHMARK TABLE — ALL OPERATIONS                     ║
+╚═══════════════════════════════════════════════════════════════╝
+
++------------------+-----------------+----------------+----------+
+| Operation        | Input           | Output example | Avg time |
++------------------+-----------------+----------------+----------+
+| Phonetic Pattern | rust            | CVCC           | 0μs      |
+| Phonetic Pattern | hello           | CVCCV          | 0μs      |
+| Phonetic Pattern | poesia          | CVVCVV         | 0μs      |
+| Phonetic Pattern | beautiful       | CVVVCVCVC      | 0μs      |
+| Palindrome       | racecar         | palindrome ✓   | 0μs      |
+| Palindrome       | hello           | mirror: olleh  | 0μs      |
+| Palindrome       | level           | palindrome ✓   | 0μs      |
+| Palindrome       | arara           | palindrome ✓   | 0μs      |
+| Syllable Split   | rust            | rust           | 0μs      |
+| Syllable Split   | computer        | com-pu-ter     | 0μs      |
+| Syllable Split   | beautiful       | beau-ti-ful    | 0μs      |
+| Syllable Split   | program         | prog-ram       | 0μs      |
+| Word Blend       | smoke+fog       | smog           | 5μs      |
+| Word Blend       | breakfast+lunch | breunch        | 24μs     |
+| Word Blend       | motor+hotel     | motel          | 7μs      |
+| Word Blend       | web+log         | wog            | 1μs      |
+| Roots Analysis   | biology         | logy+bio+bi    | 0μs      |
+| Roots Analysis   | telescope       | scope+tele     | 0μs      |
+| Roots Analysis   | thermometer     | thermo+meter   | 0μs      |
+| Roots Analysis   | autobiography   | graphy+auto+a  | 0μs      |
++------------------+-----------------+----------------+----------+
+```
+
 ### ASCII Animation Examples
 
 #### Rotating Donut
@@ -706,11 +746,14 @@ We've prepared the following issues perfect for Hacktoberfest contributions:
 
 | Issue | Difficulty | Description |
 |-------|------------|-------------|
-| [Add new ASCII animation shapes](https://github.com/lucasrafaldini/augusto/issues/1) | 🟢 Beginner | Add more 3D shapes like torus, klein bottle, mobius strip |
-| [Implement color support for animations](https://github.com/lucasrafaldini/augusto/issues/2) | 🟡 Intermediate | Add ANSI color codes to ASCII animations |
-| [Add export to GIF/Video feature](https://github.com/lucasrafaldini/augusto/issues/3) | 🔴 Advanced | Export animations as animated GIF or MP4 |
-| [Create interactive animation mode](https://github.com/lucasrafaldini/augusto/issues/4) | 🟡 Intermediate | Real-time keyboard controls for animation parameters |
-| [Add word-based particle effects](https://github.com/lucasrafaldini/augusto/issues/5) | 🟢 Beginner | Make letters explode, float, or swarm based on word meaning |
+| [Add new ASCII animation shapes](https://github.com/lucasrafaldini/augusto/issues/16) | 🟢 Beginner | Add more 3D shapes like torus, klein bottle, mobius strip |
+| [Implement color support for animations](https://github.com/lucasrafaldini/augusto/issues/17) | 🟡 Intermediate | Add ANSI color codes to ASCII animations |
+| [Add export to GIF/Video feature](https://github.com/lucasrafaldini/augusto/issues/18) | 🔴 Advanced | Export animations as animated GIF or MP4 |
+| [Create interactive animation mode](https://github.com/lucasrafaldini/augusto/issues/19) | 🟡 Intermediate | Real-time keyboard controls for animation parameters |
+| [Add word-based particle effects](https://github.com/lucasrafaldini/augusto/issues/20) | 🟢 Beginner | Make letters explode, float, or swarm based on word meaning |
+| [Mallarmé Rain - cascading text animation](https://github.com/lucasrafaldini/augusto/issues/21) | 🟡 Intermediate | Cascading text animation inspired by Mallarmé |
+| [Mallarmé Train - sequential text animation](https://github.com/lucasrafaldini/augusto/issues/22) | 🟡 Intermediate | Sequential text animation inspired by Mallarmé |
+| [Add export GIF loops feature](https://github.com/lucasrafaldini/augusto/issues/23) | 🔴 Advanced | Export animations as seamless GIF loops |
 
 ### Quick Start for Hacktoberfest Contributors
 
