@@ -919,7 +919,7 @@ pub fn find_roots(word: &str) -> Vec<RootMatch<'_>> {
         .collect();
 
     // Sort longest pattern first so specific roots appear before general ones.
-    matches.sort_by(|a, b| b.root.pattern.len().cmp(&a.root.pattern.len()));
+    matches.sort_by_key(|a| std::cmp::Reverse(a.root.pattern.len()));
 
     matches
 }
