@@ -657,8 +657,6 @@ augusto blend "smoke" "fog"
 
 augusto blend "breakfast" "lunch"
 # Output: portmanteau words like "brunch" and many other combinations
-```
-
 ### Etymological Roots Examples
 
 ```bash
@@ -678,6 +676,7 @@ augusto roots "telescope"
 # Roots found:
 #   scope      (suffix, Greek) — viewing instrument
 #   tele       (prefix, Greek) — far, distant
+```
 
 ## Development
 
