@@ -1,0 +1,53 @@
+name: "✨ Add Word-Based Particle Effects"
+description: "Make letters explode, float, or swarm based on word meaning"
+title: "[Animation] Word-based particle effects"
+labels: ["hacktoberfest", "good first issue", "enhancement", "animation", "particles"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing! This beginner-friendly issue adds particle effects where letters behave dynamically.
+  - type: textarea
+    id: effects
+    attributes:
+      label: "Proposed Particle Effects"
+      description: "What particle behaviors would be cool?"
+      placeholder: |
+        - Explosion: Letters burst outward from center
+        - Gravity: Letters fall and bounce
+        - Swarm: Letters flock together like birds
+        - Orbit: Letters orbit around a central point
+        - Wave: Letters flow in sine wave patterns
+        - Spiral: Letters spiral inward/outward
+        - Constellation: Letters connect with lines
+        - Magnetic: Letters attract/repel based on vowel/consonant
+    validations:
+      required: true
+  - type: checkboxes
+    id: requirements
+    attributes:
+      label: "Implementation Requirements"
+      options:
+        - label: "Add --effect flag with effect type"
+          required: true
+        - label: "Implement at least 3 particle effects"
+          required: true
+        - label: "Each letter as independent particle with position/velocity"
+          required: true
+        - label: "Support --filler for particle characters"
+          required: true
+        - label: "Configurable particle count and physics params"
+          required: false
+        - label: "Includes unit tests"
+          required: true
+        - label: "Updates README with particle effect examples"
+          required: true
+  - type: markdown
+    attributes:
+      value: |
+        ## Implementation Ideas
+        - Create `Particle` struct with position, velocity, character
+        - Simple physics: position += velocity; velocity += acceleration
+        - Effects are different acceleration/force functions
+        - Render by projecting 3D positions to 2D terminal coords
+        - Reference: `animation.rs` for rendering pipeline

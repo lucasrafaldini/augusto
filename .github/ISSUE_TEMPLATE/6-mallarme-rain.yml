@@ -1,0 +1,80 @@
+name: "🌧️ Mallarmé Rain Animation"
+description: "Add 3D rain animation inspired by Mallarmé's poem 'Un coup de dés jamais n'abolira le hasard'"
+title: "[Animation] Mallarmé Rain Poem - 3D Rain Animation"
+labels: ["hacktoberfest", "good first issue", "enhancement", "animation", "literature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing! This issue adds a poetic 3D rain animation inspired by Stéphane Mallarmé's masterpiece "Un coup de dés jamais n'abolira le hasard" (A throw of the dice will never abolish chance).
+
+        ## About the Poem
+        Mallarmé's poem (1897) is a revolutionary work that uses spatial arrangement of text on the page to evoke chance, randomness, and the fall of dice. The rain metaphor represents the cascading, unpredictable nature of language and meaning.
+
+  - type: textarea
+    id: visual-concept
+    attributes:
+      label: "Visual Concept"
+      description: "Describe how the rain animation should look and behave"
+      placeholder: |
+        - Raindrops as falling letters/words from the poem
+        - 3D depth with perspective (drops closer = larger, faster)
+        - Words like "hasard", "dés", "abolira", "jamais" falling
+        - Splashes on "ground" creating ripples with text
+        - Occasional dice faces (⚀⚁⚂⚃⚄⚅) tumbling in the rain
+        - Typographic rain: individual letters falling like drops
+        - Fade-in/fade-out of poem fragments
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical-approach
+    attributes:
+      label: "Technical Approach"
+      description: "How would you implement this?"
+      placeholder: |
+        - Particle system for raindrops (position, velocity, size, character)
+        - 3D projection with depth-based scaling
+        - Word pool from Mallarmé's poem (French or translated)
+        - Splash particles on collision with ground plane
+        - Optional: wind parameter for angled rain
+        - Color: grayscale/blue tones for rain mood
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: requirements
+    attributes:
+      label: "Implementation Requirements"
+      options:
+        - label: "Add 'mallarme-rain' or 'rain' as new animation shape"
+          required: true
+        - label: "Implement 3D particle rain system with depth"
+          required: true
+        - label: "Use words/letters from Mallarmé's poem as particles"
+          required: true
+        - label: "Support --speed, --frames, --color, --filler options"
+          required: true
+        - label: "Add splash/ripple effects on ground collision"
+          required: false
+        - label: "Include dice faces (⚀-⚅) as rare special particles"
+          required: false
+        - label: "Support wind angle parameter (--wind)"
+          required: false
+        - label: "Includes unit tests"
+          required: true
+        - label: "Updates README with example"
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Poem Reference (French)
+        ```
+        Un coup de dés jamais n'abolira le hasard
+        ```
+
+        ## Resources
+        - [Mallarmé's poem analysis](https://en.wikipedia.org/wiki/Un_coup_de_d%C3%A9s)
+        - [Particle systems in ASCII](https://github.com/topics/ascii-animation)
+        - Existing `animation.rs` for reference

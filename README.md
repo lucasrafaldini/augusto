@@ -1,8 +1,16 @@
 # augusto 🎭
 
-[![Rust](https://github.com/lucasrafaldini/augusto/workflows/Rust/badge.svg)](https://github.com/lucasrafaldini/augusto/actions)
+[![Rust](https://github.com/lucasrafaldini/augusto/actions/workflows/rust.yml/badge.svg)](https://github.com/lucasrafaldini/augusto/actions/workflows/rust.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Rust Version](https://img.shields.io/badge/rust-1.56%2B-blue.svg)](https://www.rust-lang.org)
+[![Crates.io](https://img.shields.io/crates/v/augusto.svg)](https://crates.io/crates/augusto)
+[![Crates.io Downloads](https://img.shields.io/crates/d/augusto.svg)](https://crates.io/crates/augusto)
+[![Hacktoberfest 2026](https://img.shields.io/badge/Hacktoberfest-2026-orange.svg)](https://hacktoberfest.digitalocean.com/)
+[![Open Issues](https://img.shields.io/github/issues/lucasrafaldini/augusto)](https://github.com/lucasrafaldini/augusto/issues)
+[![Good First Issues](https://img.shields.io/github/issues/lucasrafaldini/augusto/good%20first%20issue)](https://github.com/lucasrafaldini/augusto/issues?q=is%3Aissue+is%3Aopen+label%3A"good+first+issue")
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/lucasrafaldini/augusto/pulls)
+[![Code Style: Rust](https://img.shields.io/badge/code_style-rustfmt-blue.svg)](https://github.com/rust-lang/rustfmt)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
 augusto is a Rust command-line suite that allows you to interact with words in creative and insightful ways directly from your terminal.
 
@@ -26,6 +34,7 @@ Inspired by the Brazilian concrete poet Augusto de Campos, who explored the visu
 - [Usage](#usage)
 - [Examples](#examples)
 - [Development](#development)
+- [Hacktoberfest 2026](#hacktoberfest-2026-)
 - [Contributing](#contributing)
 - [Roadmap](#roadmap)
 - [License](#license)
@@ -137,6 +146,46 @@ augusto bench anagram "test"
 
 # Benchmark ASCII art
 augusto bench art "RUST" "code"
+```
+
+#### ASCII Animations (NEW in 0.2.0)
+
+```bash
+augusto animate <shape> <word> [options]
+```
+
+**Arguments:**
+- `<shape>`: The 3D shape to animate (`donut`, `cube`, `cube5d`, `sphere`, `mandala`, `pyramid`)
+- `<word>`: The word to display within the animation
+
+**Options:**
+- `--speed <ms>`: Frame delay in milliseconds (default: 100)
+- `--frames <n>`: Number of frames to render (default: infinite, use Ctrl+C to stop)
+- `--color`: Enable ANSI color output
+- `--filler <word>`: Word to use as filler characters (default: the main word)
+
+**Output:**
+Animated ASCII art of the specified 3D shape with the word embedded.
+
+**Examples:**
+```bash
+# Rotating donut with word "RUST"
+augusto animate donut "RUST"
+
+# Rotating cube with custom speed
+augusto animate cube "CODE" --speed 50
+
+# 5D cube projection with color
+augusto animate cube5d "HACKTOBERFEST" --color
+
+# Sphere with custom filler word
+augusto animate sphere "RUST" --filler "code"
+
+# Mandala pattern
+augusto animate mandala "PEACE" --speed 80
+
+# Pyramid with limited frames
+augusto animate pyramid "RUST" --frames 50
 ```
 
 #### Help
@@ -259,6 +308,44 @@ augusto bench art "LUXO" "LIXO"
 
 **Note:** Benchmark iterations automatically adjust based on input complexity. Shorter inputs run more iterations for accurate measurements.
 
+### ASCII Animation Examples
+
+#### Rotating Donut
+```bash
+augusto animate donut "RUST"
+# Output: A rotating torus/donut shape with "RUST" letters flowing on its surface
+```
+
+#### Rotating Cube
+```bash
+augusto animate cube "CODE" --speed 50
+# Output: A 3D wireframe cube rotating on X, Y, and Z axes with "CODE" text
+```
+
+#### 5D Cube (Hypercube/Tesseract Projection)
+```bash
+augusto animate cube5d "HACKTOBERFEST" --color
+# Output: A 4D hypercube projected to 3D then 2D, with ANSI colors
+```
+
+#### Rotating Sphere
+```bash
+augusto animate sphere "RUST" --filler "code"
+# Output: A wireframe sphere rotating with letters from "code" on its surface
+```
+
+#### Mandala Pattern
+```bash
+augusto animate mandala "PEACE" --speed 80
+# Output: A hypnotic mandala pattern with rotational symmetry and "PEACE" text
+```
+
+#### Pyramid
+```bash
+augusto animate pyramid "RUST" --frames 50
+# Output: A 3D pyramid rotating with "RUST" on its faces
+```
+
 ## Development
 
 ### Project Structure
@@ -270,6 +357,7 @@ augusto/
 │   │   ├── main.rs       # Entry point and CLI handling
 │   │   ├── anagram.rs    # Anagram generation logic
 │   │   ├── ascii_art.rs  # ASCII art generation logic
+│   │   ├── animation.rs  # ASCII animation logic (3D shapes, donuts, etc.)
 │   │   └── benchmark.rs  # Performance benchmarking utilities
 │   ├── Cargo.toml        # Project dependencies
 │   └── Cargo.lock        # Locked dependencies
@@ -300,6 +388,48 @@ cargo run -- "word"
 ```bash
 cd augusto
 cargo build --release
+```
+
+## Hacktoberfest 2026 🎃
+
+augusto is participating in **Hacktoberfest 2026**! We welcome contributors of all skill levels to help improve this project.
+
+### How to Participate
+
+1. **Check out our [Hacktoberfest issues](https://github.com/lucasrafaldini/augusto/issues?q=is%3Aissue+is%3Aopen+label%3Ahacktoberfest)** - Look for issues labeled `hacktoberfest` and `good first issue`
+2. **Comment on an issue** to claim it and ask questions
+3. **Fork the repository** and create a branch for your work
+4. **Make your changes** following our [contribution guidelines](#contributing)
+5. **Submit a Pull Request** with the `hacktoberfest` label
+
+### Hacktoberfest-Specific Issues for 2026
+
+We've prepared the following issues perfect for Hacktoberfest contributions:
+
+| Issue | Difficulty | Description |
+|-------|------------|-------------|
+| [Add new ASCII animation shapes](https://github.com/lucasrafaldini/augusto/issues/1) | 🟢 Beginner | Add more 3D shapes like torus, klein bottle, mobius strip |
+| [Implement color support for animations](https://github.com/lucasrafaldini/augusto/issues/2) | 🟡 Intermediate | Add ANSI color codes to ASCII animations |
+| [Add export to GIF/Video feature](https://github.com/lucasrafaldini/augusto/issues/3) | 🔴 Advanced | Export animations as animated GIF or MP4 |
+| [Create interactive animation mode](https://github.com/lucasrafaldini/augusto/issues/4) | 🟡 Intermediate | Real-time keyboard controls for animation parameters |
+| [Add word-based particle effects](https://github.com/lucasrafaldini/augusto/issues/5) | 🟢 Beginner | Make letters explode, float, or swarm based on word meaning |
+
+### Quick Start for Hacktoberfest Contributors
+
+```bash
+# 1. Fork and clone
+git clone https://github.com/YOUR_USERNAME/augusto.git
+cd augusto
+
+# 2. Build and test
+cd augusto
+cargo build --release
+cargo test
+
+# 3. Try the new animation feature!
+cargo run -- animate donut "RUST"
+cargo run -- animate cube "CODE"
+cargo run -- animate sphere "HACKTOBERFEST"
 ```
 
 ## Contributing

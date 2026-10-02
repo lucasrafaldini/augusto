@@ -1,0 +1,71 @@
+name: "🎨 Add New ASCII Animation Shapes"
+description: "Add new 3D shapes to the ASCII animation system"
+title: "[Animation] Add <shape_name> shape"
+labels: ["hacktoberfest", "good first issue", "enhancement", "animation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing to augusto's ASCII animation system! This issue is perfect for Hacktoberfest 2026 beginners.
+  - type: dropdown
+    id: shape-type
+    attributes:
+      label: "Shape Type"
+      description: "What kind of shape would you like to add?"
+      options:
+        - Torus / Donut variations
+        - Klein Bottle
+        - Möbius Strip
+        - Cylinder
+        - Cone
+        - Platonic solids (tetrahedron, octahedron, dodecahedron, icosahedron)
+        - Custom parametric surface
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: shape-description
+    attributes:
+      label: "Shape Description"
+      description: "Describe the mathematical properties and visual appearance of the shape"
+      placeholder: "e.g., A Klein bottle is a non-orientable surface with no boundary..."
+    validations:
+      required: true
+  - type: textarea
+    id: math-formula
+    attributes:
+      label: "Mathematical Formula / Parametric Equations"
+      description: "Provide the parametric equations or reference for generating this shape"
+      placeholder: |
+        x(u,v) = ...
+        y(u,v) = ...
+        z(u,v) = ...
+        where u ∈ [0, 2π], v ∈ [0, 2π]
+    validations:
+      required: false
+  - type: checkboxes
+    id: requirements
+    attributes:
+      label: "Implementation Requirements"
+      options:
+        - label: "Shape renders as wireframe ASCII art"
+          required: true
+        - label: "Shape supports rotation on X, Y, Z axes"
+          required: true
+        - label: "Word text can be embedded on the shape surface"
+          required: true
+        - label: "Supports custom filler word"
+          required: true
+        - label: "Supports --speed, --frames, --color, --filler CLI options"
+          required: true
+        - label: "Includes unit tests"
+          required: true
+        - label: "Updates README with example"
+          required: true
+  - type: markdown
+    attributes:
+      value: |
+        ## Resources
+        - [ASCII 3D Rendering Basics](https://www.reddit.com/r/ascii/comments/xyz)
+        - [Parametric Surfaces](https://en.wikipedia.org/wiki/Parametric_surface)
+        - Existing shapes in `augusto/src/animation.rs` for reference

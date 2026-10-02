@@ -1,0 +1,99 @@
+name: "📹 Export Animations as Looping GIF"
+description: "Add feature to export ASCII animations as animated GIFs with configurable loops"
+title: "[Export] Export animations as looping GIF files"
+labels: ["hacktoberfest", "enhancement", "animation", "export", "gif", "intermediate"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing! This issue adds the ability to save ASCII animations as animated GIF files that can be shared on social media, embedded in READMEs, or used in presentations.
+
+  - type: textarea
+    id: features
+    attributes:
+      label: "GIF Export Features"
+      description: "What should the GIF export support?"
+      placeholder: |
+        - `--export gif` flag to enable GIF output
+        - `--output file.gif` to specify output path
+        - `--loops N` for number of loops (0 = infinite, default)
+        - `--fps N` for frame rate (default: 10)
+        - `--duration N` for total duration in seconds (alternative to --frames)
+        - `--scale N` for pixel scaling (each ASCII char = N×N pixels)
+        - `--font` option for custom font rendering (builtin 8x8, or TTF)
+        - `--bg-color` and `--fg-color` for custom colors
+        - Preserve ANSI colors from --color flag in GIF
+        - Optimize GIF (global color table, frame disposal)
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical-approach
+    attributes:
+      label: "Technical Approach"
+      description: "How would you implement this?"
+      placeholder: |
+        - Use `gif` crate (pure Rust, no external deps)
+        - Capture frames from existing `get_frame()` function
+        - Render each frame to RGB buffer (ASCII -> pixels)
+        - Built-in 8x8 or 8x16 font bitmap for characters
+        - Map ANSI colors to RGB palette
+        - Write frames with proper delay (100ms = 10fps)
+        - Handle loop count in Netscape Application Extension
+        - Stream frames to avoid memory issues for long animations
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: requirements
+    attributes:
+      label: "Implementation Requirements"
+      options:
+        - label: "Add --export gif, --output, --loops, --fps, --scale flags"
+          required: true
+        - label: "Use `gif` crate for encoding"
+          required: true
+        - label: "Render ASCII frames to pixel buffers"
+          required: true
+        - label: "Include built-in 8x8 font bitmap"
+          required: true
+        - label: "Support ANSI color -> RGB conversion"
+          required: true
+        - label: "Configurable loop count (0 = infinite)"
+          required: true
+        - label: "Handle all animation shapes (donut, cube, cube5d, sphere, mandala, pyramid, rain, train)"
+          required: true
+        - label: "Optimize GIF size (global palette, minimal frames)"
+          required: false
+        - label: "Add --duration alternative to --frames"
+          required: false
+        - label: "Includes integration tests"
+          required: true
+        - label: "Updates README with export examples"
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Usage Examples
+        ```bash
+        # Export donut as looping GIF
+        augusto animate donut "RUST" --export gif --output donut.gif --loops 0 --fps 15
+
+        # Export cube with custom duration and scale
+        augusto animate cube "CODE" --export gif --output cube.gif --duration 5 --scale 2 --color
+
+        # Export 5D cube high quality
+        augusto animate cube5d "HACK" --export gif --output hypercube.gif --fps 20 --scale 3
+        ```
+
+        ## Dependencies
+        Add to `Cargo.toml`:
+        ```toml
+        gif = "0.12"
+        ```
+
+        ## Resources
+        - [gif crate docs](https://docs.rs/gif/)
+        - [GIF specification](https://www.w3.org/Graphics/GIF/spec-gif89a.txt)
+        - [ASCII to pixel rendering](https://github.com/ascii/ascii-font)

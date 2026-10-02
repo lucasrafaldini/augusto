@@ -18,6 +18,7 @@
 
 use std::{collections::HashSet, env};
 mod anagram;
+mod animation;
 mod ascii_art;
 mod benchmark;
 
@@ -100,6 +101,18 @@ fn main() {
             }
             run_comparison(&args[2..]);
         }
+        "animate" | "anim" => {
+            if args.len() < 4 {
+                eprintln!("Error: Missing shape and word for animation");
+                eprintln!("\nUsage: augusto animate <shape> <word> [options]");
+                eprintln!("Shapes: donut, cube, cube5d, sphere, mandala, pyramid");
+                eprintln!("Example: augusto animate donut \"RUST\"");
+                eprintln!("         augusto animate cube \"CODE\" --speed 50");
+                eprintln!("         augusto animate sphere \"HACK\" --color --filler rust");
+                std::process::exit(1);
+            }
+            run_animation(&args[2..]);
+        }
         "help" | "--help" | "-h" => {
             print_usage();
         }
@@ -126,14 +139,37 @@ fn print_usage() {
     println!("COMMANDS:");
     println!("    anagram <word>                      Generate all anagrams of a word");
     println!("    art <main> <filler> [spacing]       Create ASCII art (optional spacing)");
+    println!("    animate <shape> <word> [options]    Create ASCII animations (NEW!)");
     println!("    bench <operation> <args...>         Benchmark an operation with stats");
     println!("    compare <word1> <word2> ...         Compare anagram performance");
     println!("    help                                Show this help message");
+    println!();
+    println!("ANIMATION SHAPES:");
+    println!("    donut       Rotating torus/donut");
+    println!("    cube        Rotating 3D wireframe cube");
+    println!("    cube5d      4D hypercube (tesseract) projection");
+    println!("    sphere      Rotating wireframe sphere");
+    println!("    mandala     Hypnotic rotational symmetry pattern");
+    println!("    pyramid     Rotating 3D pyramid");
+    println!();
+    println!("ANIMATION OPTIONS:");
+    println!("    --speed <ms>      Frame delay in milliseconds (default: 100)");
+    println!("    --frames <n>      Number of frames to render (default: infinite)");
+    println!("    --color           Enable ANSI color output");
+    println!("    --filler <word>   Word to use as filler characters");
+    println!("    --width <n>       Terminal width (default: 80)");
+    println!("    --height <n>      Terminal height (default: 40)");
     println!();
     println!("EXAMPLES:");
     println!("    augusto anagram \"cat\"");
     println!("    augusto art \"RUST\" \"code\"");
     println!("    augusto art \"RUST\" \"code\" 2");
+    println!("    augusto animate donut \"RUST\"");
+    println!("    augusto animate cube \"CODE\" --speed 50");
+    println!("    augusto animate cube5d \"HACKTOBERFEST\" --color");
+    println!("    augusto animate sphere \"RUST\" --filler code");
+    println!("    augusto animate mandala \"PEACE\" --speed 80");
+    println!("    augusto animate pyramid \"RUST\" --frames 50");
     println!("    augusto bench anagram \"test\"");
     println!("    augusto bench art \"HI\" \"rust\"");
     println!("    augusto compare \"cat\" \"test\" \"program\"");
@@ -252,6 +288,131 @@ fn run_comparison(words: &[String]) {
     }
 
     println!("{}", suite.format_comparison());
+}
+
+/// Run ASCII animation
+fn run_animation(args: &[String]) {
+    if args.len() < 2 {
+        eprintln!("Error: Missing shape and word for animation");
+        eprintln!("\nUsage: augusto animate <shape> <word> [options]");
+        eprintln!("Shapes: donut, cube, cube5d, sphere, mandala, pyramid");
+        std::process::exit(1);
+    }
+
+    let shape_str = &args[0];
+    let word = &args[1];
+
+    // Parse options
+    let mut speed_ms = 100u64;
+    let mut frames: Option<usize> = None;
+    let mut color = false;
+    let mut filler: Option<String> = None;
+    let mut width = 80usize;
+    let mut height = 40usize;
+
+    let mut i = 2;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--speed" => {
+                if i + 1 < args.len() {
+                    if let Ok(val) = args[i + 1].parse::<u64>() {
+                        speed_ms = val;
+                    } else {
+                        eprintln!("Error: Invalid speed value '{}'", args[i + 1]);
+                        std::process::exit(1);
+                    }
+                    i += 2;
+                } else {
+                    eprintln!("Error: --speed requires a value");
+                    std::process::exit(1);
+                }
+            }
+            "--frames" => {
+                if i + 1 < args.len() {
+                    if let Ok(val) = args[i + 1].parse::<usize>() {
+                        frames = Some(val);
+                    } else {
+                        eprintln!("Error: Invalid frames value '{}'", args[i + 1]);
+                        std::process::exit(1);
+                    }
+                    i += 2;
+                } else {
+                    eprintln!("Error: --frames requires a value");
+                    std::process::exit(1);
+                }
+            }
+            "--color" => {
+                color = true;
+                i += 1;
+            }
+            "--filler" => {
+                if i + 1 < args.len() {
+                    filler = Some(args[i + 1].clone());
+                    i += 2;
+                } else {
+                    eprintln!("Error: --filler requires a value");
+                    std::process::exit(1);
+                }
+            }
+            "--width" => {
+                if i + 1 < args.len() {
+                    if let Ok(val) = args[i + 1].parse::<usize>() {
+                        width = val;
+                    } else {
+                        eprintln!("Error: Invalid width value '{}'", args[i + 1]);
+                        std::process::exit(1);
+                    }
+                    i += 2;
+                } else {
+                    eprintln!("Error: --width requires a value");
+                    std::process::exit(1);
+                }
+            }
+            "--height" => {
+                if i + 1 < args.len() {
+                    if let Ok(val) = args[i + 1].parse::<usize>() {
+                        height = val;
+                    } else {
+                        eprintln!("Error: Invalid height value '{}'", args[i + 1]);
+                        std::process::exit(1);
+                    }
+                    i += 2;
+                } else {
+                    eprintln!("Error: --height requires a value");
+                    std::process::exit(1);
+                }
+            }
+            _ => {
+                eprintln!("Error: Unknown option '{}'", args[i]);
+                eprintln!(
+                    "Supported options: --speed, --frames, --color, --filler, --width, --height"
+                );
+                std::process::exit(1);
+            }
+        }
+    }
+
+    let shape = match animation::AnimationShape::from_str(shape_str) {
+        Some(s) => s,
+        None => {
+            eprintln!("Error: Unknown shape '{}'", shape_str);
+            eprintln!("Available shapes: donut, cube, cube5d, sphere, mandala, pyramid");
+            std::process::exit(1);
+        }
+    };
+
+    let config = animation::AnimationConfig {
+        shape,
+        word: word.clone(),
+        filler,
+        speed_ms,
+        frames,
+        color,
+        width,
+        height,
+    };
+
+    animation::animate(config);
 }
 
 #[cfg(test)]

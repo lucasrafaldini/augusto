@@ -1,0 +1,51 @@
+name: "🌈 Implement Color Support for Animations"
+description: "Add ANSI color codes to ASCII animations"
+title: "[Animation] Add color support for ASCII animations"
+labels: ["hacktoberfest", "good first issue", "enhancement", "animation", "color"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing! This issue adds ANSI color support to make animations more visually appealing.
+  - type: textarea
+    id: color-schemes
+    attributes:
+      label: "Proposed Color Schemes"
+      description: "What color schemes would you like to implement?"
+      placeholder: |
+        - Rainbow/cycling colors
+        - Depth-based coloring (closer = brighter)
+        - Word-based coloring (each letter different color)
+        - Gradient schemes
+        - Theme presets (matrix, sunset, ocean, fire, etc.)
+    validations:
+      required: true
+  - type: checkboxes
+    id: requirements
+    attributes:
+      label: "Implementation Requirements"
+      options:
+        - label: "Add --color flag to animate command"
+          required: true
+        - label: "Add --color-scheme option with multiple presets"
+          required: true
+        - label: "Implement depth-based coloring (Z-buffer aware)"
+          required: true
+        - label: "Add rainbow/cycling color mode"
+          required: true
+        - label: "Support custom RGB colors via --color-rgb R,G,B"
+          required: false
+        - label: "Maintain compatibility with non-color terminals"
+          required: true
+        - label: "Includes unit tests"
+          required: true
+        - label: "Updates README with color examples"
+          required: true
+  - type: markdown
+    attributes:
+      value: |
+        ## Technical Details
+        - Use ANSI escape codes: `\x1b[38;2;R;G;Bm` for true color
+        - Consider using `termion` or `crossterm` for cross-platform color support
+        - Fallback gracefully when color not supported
+        - Reference: Existing animation.rs for integration points

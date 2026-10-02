@@ -1,0 +1,57 @@
+name: "🎮 Create Interactive Animation Mode"
+description: "Real-time keyboard controls for animation parameters"
+title: "[Animation] Interactive mode with keyboard controls"
+labels: ["hacktoberfest", "enhancement", "animation", "interactive", "intermediate"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing! This adds a fun interactive mode where users can control animations in real-time.
+  - type: textarea
+    id: controls
+    attributes:
+      label: "Proposed Keyboard Controls"
+      description: "What keys should control what?"
+      placeholder: |
+        - Space: Pause/Resume
+        - ↑/↓: Increase/decrease rotation speed
+        - ←/→: Change rotation axis (X/Y/Z)
+        - +/-: Zoom in/out
+        - C: Toggle color mode
+        - S: Cycle through shapes
+        - F: Cycle through filler words
+        - R: Reset to defaults
+        - Q/ESC: Quit
+        - 1-9: Set specific speed presets
+    validations:
+      required: true
+  - type: checkboxes
+    id: requirements
+    attributes:
+      label: "Implementation Requirements"
+      options:
+        - label: "Add --interactive / -i flag to animate command"
+          required: true
+        - label: "Implement raw terminal mode for key capture"
+          required: true
+        - label: "Support all proposed keyboard controls"
+          required: true
+        - label: "Show on-screen help overlay (press ?)"
+          required: true
+        - label: "Display current FPS and parameters"
+          required: true
+        - label: "Smooth parameter transitions"
+          required: false
+        - label: "Includes unit/integration tests"
+          required: true
+        - label: "Updates README with interactive mode guide"
+          required: true
+  - type: markdown
+    attributes:
+      value: |
+        ## Technical Details
+        - Use `termion` or `crossterm` for raw mode and key events
+        - Run animation in separate thread, handle input in main thread
+        - Use channels for communication between threads
+        - Ensure proper terminal cleanup on exit (Ctrl+C handling)
+        - Consider using `tokio` for async if needed

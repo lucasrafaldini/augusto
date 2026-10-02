@@ -1,0 +1,89 @@
+name: "🚂 Mallarmé Train Animation"
+description: "Add 3D train animation inspired by Mallarmé's poem 'Le Train'"
+title: "[Animation] Mallarmé Train Poem - 3D Train Animation"
+labels: ["hacktoberfest", "good first issue", "enhancement", "animation", "literature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing! This issue adds a poetic 3D train animation inspired by Stéphane Mallarmé's poem about trains, modernity, and the transformation of landscape and time.
+
+        ## About the Poem
+        Mallarmé wrote about trains as symbols of modernity, speed, and the reconfiguration of space and time. The train represents the industrial rhythm cutting through nature, the mechanical heartbeat of the 19th century.
+
+  - type: textarea
+    id: visual-concept
+    attributes:
+      label: "Visual Concept"
+      description: "Describe how the train animation should look and behave"
+      placeholder: |
+        - 3D train locomotive + cars moving along tracks
+        - Tracks receding in perspective (vanishing point)
+        - Steam/smoke particles with poem words: "vitesse", "fer", "chemin", "temps"
+        - Wheels rotating with text on spokes
+        - Landscape scrolling by: telegraph poles, trees, stations
+        - Rhythm: chug-chug timing with frame updates
+        - Headlight beam cutting through darkness
+        - Carriage windows showing fleeting text fragments
+        - Coupling rods animating (piston motion)
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical-approach
+    attributes:
+      label: "Technical Approach"
+      description: "How would you implement this?"
+      placeholder: |
+        - Train as collection of 3D boxes (locomotive, tender, cars)
+        - Track geometry: two parallel rails + sleepers in perspective
+        - Wheel rotation synced to forward motion
+        - Steam particles as rising/fading text cloud
+        - Landscape as parallax layers (near/far)
+        - Poem words on train cars, in steam, on landscape
+        - Speed parameter controls animation rate
+        - Color: sepia/steampunk palette for period feel
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: requirements
+    attributes:
+      label: "Implementation Requirements"
+      options:
+        - label: "Add 'mallarme-train' or 'train' as new animation shape"
+          required: true
+        - label: "Implement 3D train with locomotive and cars"
+          required: true
+        - label: "Tracks with proper perspective (vanishing point)"
+          required: true
+        - label: "Rotating wheels synchronized to motion"
+          required: true
+        - label: "Steam/smoke particles with poem text"
+          required: true
+        - label: "Parallax scrolling landscape"
+          required: false
+        - label: "Support --speed, --frames, --color, --filler options"
+          required: true
+        - label: "Add --cars N parameter for number of carriages"
+          required: false
+        - label: "Rhythmic 'chug' timing visible in animation"
+          required: false
+        - label: "Includes unit tests"
+          required: true
+        - label: "Updates README with example"
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Poem Inspiration
+        Mallarmé's railway imagery evokes:
+        - "Le train... fend l'espace" (The train splits space)
+        - "Vitesse" (speed), "Fer" (iron), "Chemin" (path/rail)
+        - The transformation of landscape by technology
+
+        ## Resources
+        - [Mallarmé and modernity](https://www.poetryfoundation.org/poets/stephane-mallarme)
+        - [ASCII train examples](https://github.com/topics/ascii-train)
+        - Existing `animation.rs` for 3D projection reference
