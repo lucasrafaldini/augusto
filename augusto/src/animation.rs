@@ -202,8 +202,6 @@ const COLORS: &[&str] = &[
 
 const RESET: &str = "\x1b[0m";
 
-/// Background color for the AUGUSTO title frame
-
 /// Generate animated LED ticker border frame with clockwise rotation
 fn add_frame(output: &str, width: usize, config: &AnimationConfig, frame: usize) -> String {
     let border = &config.border;
