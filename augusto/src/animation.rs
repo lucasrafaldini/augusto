@@ -215,20 +215,16 @@ fn add_frame(output: &str, width: usize, config: &AnimationConfig, frame: usize)
     let reset = RESET;
 
     // Build the ticker text with separators
-    let ticker_unit = format!("{}{}", border.text, border.separator);
-    let ticker_len = ticker_unit.len();
+    // Build the ticker text - use just the text characters, handle separator separately
+    let ticker_text: Vec<char> = border.text.chars().collect();
+    let _separator: Vec<char> = border.separator.chars().collect();
+    let ticker_len = ticker_text.len();
 
     // Calculate scroll offset based on frame and scroll_speed
     let frames_per_char = border.scroll_speed.max(1) as isize;
     let direction = border.direction as isize;
     let scroll_offset =
         ((frame as isize / frames_per_char) * direction).rem_euclid(ticker_len as isize) as usize;
-
-    // Generate infinite ticker pattern
-    let repeat_count = (width + ticker_len) / ticker_len + 2;
-    let full_ticker: String = ticker_unit.repeat(repeat_count);
-    let full_ticker_chars: Vec<char> = full_ticker.chars().collect();
-    let _full_len = full_ticker_chars.len();
 
     // Get animation height (number of content lines)
     let lines: Vec<&str> = output.lines().collect();
@@ -237,7 +233,7 @@ fn add_frame(output: &str, width: usize, config: &AnimationConfig, frame: usize)
     // Perimeter: top(width) + right(anim_height) + bottom(width) + left(anim_height)
     // Total = 2*width + 2*anim_height
     let get_char =
-        |perim_pos: usize| -> char { full_ticker_chars[(scroll_offset + perim_pos) % ticker_len] };
+        |perim_pos: usize| -> char { ticker_text[(scroll_offset + perim_pos) % ticker_len] };
 
     // Top border (left to right): positions 0 to width-1
     let top_ticker: String = (0..width).map(&get_char).collect();
@@ -245,14 +241,16 @@ fn add_frame(output: &str, width: usize, config: &AnimationConfig, frame: usize)
     // Right border (top to bottom): positions width to width+anim_height-1
     let right_chars: Vec<char> = (0..anim_height).map(|y| get_char(width + y)).collect();
 
-    // Bottom border (right to left): positions width+anim_height to 2*width+anim_height-1
+    // Bottom border (right-to-left display): positions width+anim_height to 2*width+anim_height-1
+    // Screen x=0 (left) -> perimeter start, x=width-1 (right) -> perimeter end
     let bottom_ticker: String = (0..width)
-        .map(|x| get_char(width + anim_height + (width - 1 - x)))
+        .map(|x| get_char(width + anim_height + x))
         .collect();
 
-    // Left border (bottom to top): positions 2*width+anim_height to 2*width+2*anim_height-1
+    // Left border (bottom-to-top display): positions 2*width+anim_height to 2*width+2*anim_height-1
+    // Screen y=0 (top) -> perimeter start, y=anim_height-1 (bottom) -> perimeter end
     let left_chars: Vec<char> = (0..anim_height)
-        .map(|y| get_char(2 * width + anim_height + (anim_height - 1 - y)))
+        .map(|y| get_char(2 * width + anim_height + y))
         .collect();
 
     // Corner pieces based on thickness
@@ -778,7 +776,7 @@ fn render_mandala(edges: &[Edge], rotation: f32, config: &AnimationConfig, frame
 pub fn animate(config: AnimationConfig) {
     // Generate geometry based on shape
     let edges = match config.shape {
-        AnimationShape::Donut => generate_donut(2.0, 1.0, 40, 20),
+        AnimationShape::Donut => generate_donut(2.0, 1.0, 60, 30),
         AnimationShape::Cube => generate_cube(3.0),
         AnimationShape::Cube5D => generate_cube5d(2.5),
         AnimationShape::Sphere => generate_sphere(2.5, 16, 32),
@@ -839,7 +837,7 @@ pub fn animate(config: AnimationConfig) {
 #[allow(dead_code)]
 pub fn get_frame(config: &AnimationConfig, frame: usize) -> String {
     let edges = match config.shape {
-        AnimationShape::Donut => generate_donut(2.0, 1.0, 40, 20),
+        AnimationShape::Donut => generate_donut(2.0, 1.0, 60, 30),
         AnimationShape::Cube => generate_cube(3.0),
         AnimationShape::Cube5D => generate_cube5d(2.5),
         AnimationShape::Sphere => generate_sphere(2.5, 16, 32),
