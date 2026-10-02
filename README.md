@@ -312,39 +312,148 @@ augusto bench art "LUXO" "LIXO"
 
 #### Rotating Donut
 ```bash
-augusto animate donut "RUST"
-# Output: A rotating torus/donut shape with "RUST" letters flowing on its surface
+augusto animate donut "RUST" --frames 1 --width 70 --height 25
 ```
+```
+                        RRTSSTSUURTTSURTSTSURRT                       
+                     USSUURTSSURTSUURTUSUSURSURSUT                    
+                   SRTSURSUTSUTSUURTSRTSSRTRTRURURRT                  
+                 RRSUTTUR RTUTSURURTSRURTTSUU TRSSURST                
+               USTT RUTSTURSRTRTSTSURUTUURRTSTSURST UTTR              
+              RSURUSTTUURSSSTUSUURRSRSTSSUSUTRSTUUTTURRSS             
+             RUTSTSURTSURTRUTRRT       RRSUSUUTRSSRRSSSTSU            
+             SUURSRRSSRSUTTUS             USSRRUSUTTRUURUR            
+             TSUUTRUSTRRUSTSU             RTTTSRTURSUTRTRT            
+             URTSUSUTTRUUSSTSTTT       STRTRTSSURRSTRSUURR            
+              TSRT RTSURTTRRURUSRUUTUTSTURSUSUURTSUU STRT             
+               URUS USRURSSUTRUSTTUSTRURSSTUURSTTUR SSUT              
+                TSTRRTUSRSTRSTRUUSTRUSTSRURSTUTRRSTSRRS               
+                  SRUTSSRUSTTSTRUSTRUSSTRSRURUTRUSTTS                 
+                     URUSRURUSTSTRUSSTRRSTRUSSRUUU                    
+                        TRTUSTRUSSTRRUSSTRRUSTT                       
+```
+*Run without `--frames` for infinite animation. Add `--color` for ANSI colors.*
 
 #### Rotating Cube
 ```bash
-augusto animate cube "CODE" --speed 50
-# Output: A 3D wireframe cube rotating on X, Y, and Z axes with "CODE" text
+augusto animate cube "CODE" --frames 1 --width 70 --height 25
 ```
+```
+                    ELOLLEHOLLEHOLLEHOLLEHOLLEHOLEE                   
+                    L LO                       LL H                   
+                    L   HE                   HO   O                   
+                    O     LOLLEHOLLEHOLLEHOLE     L                   
+                    H      H               L      L                   
+                    E      E               E      E                   
+                    L      L               H      H                   
+                    L      L               O      O                   
+                    O     OLLOHELLOHELLOHELLH     L                   
+                    H   LL                   OL   L                   
+                    E HE                       LE E                   
+                    HOLLOHELLOHELLOHELLOHELLOHELLHH                   
+```
+*Wireframe cube rotating on X, Y, and Z axes. Use `--speed 50` for faster rotation.*
 
 #### 5D Cube (Hypercube/Tesseract Projection)
 ```bash
-augusto animate cube5d "HACKTOBERFEST" --color
-# Output: A 4D hypercube projected to 3D then 2D, with ANSI colors
+augusto animate cube5d "HACK" --frames 1 --width 70 --height 25 --color
 ```
+```
+         CKCKHACKHACKHACKHACKHACKHACKHACKHACKHACKHACKHACKHACCK        
+         C HAC                                            HK K        
+         A   CKH                                       KCA   C        
+         H      ACK                                  AH      A        
+         K         HAC                            HKC        H        
+         C           CKH                       ACA           K        
+         A              AAHACKHACKHACKHACKHACKKK             C        
+         H               A KCHACKHACKHACKHKHA K              A        
+         K               H  KAKHACKHACKHAC A  C              H        
+         C               K  C C         A  H  A              K        
+         A               C  A A         H  K  H              C        
+         H               A  HKCHACKHACKHAC C  K              A        
+         K               H AHACKHACKHACKHAKHA C              H        
+         C              AKHACKHACKHACKHACKHACKKA             K        
+         A            KH                       AHK           C        
+         H         HAC                            CAH        A        
+         K      ACK                                 CKC      H        
+         C    KH                                       AHK   K        
+         A HAC                                            CA C        
+         AKHACKHACKHACKHACKHACKHACKHACKHACKHACKHACKHACKHACKHHK        
+```
+*4D hypercube (tesseract) projected to 3D then 2D. `--color` enables rainbow ANSI colors.*
 
 #### Rotating Sphere
 ```bash
-augusto animate sphere "RUST" --filler "code"
-# Output: A wireframe sphere rotating with letters from "code" on its surface
+augusto animate sphere "RUST" --filler "code" --frames 1 --width 60 --height 20
 ```
+```
+                          USSTRURSU                         
+                    TRTUURTSURRSTUTRURSTR                   
+                URSTURRTSUURTSURTSUSTUTSTRRTU               
+              TSTURSTSRRTSRURUTTSRRTSURRSSUTSST             
+              RTSUTSSUTSTUUTSSRRSUUTTSUUTTSRUSUS            
+             RTRTRUTUSRRTSURTSURTSURTSSRRSUUTTUR            
+             TSSUSRSTRUSTRUSTRUSTRUSTRUSTRSRUSTS            
+             URURRSTUTTSUUTRUTTSUUTRUTTUUTSSRRSU            
+              RTSSTURRTSUUTRTRSSURTTUSURTTURTURS            
+              USUTSUURRTSRSSUUTRURSSRTTSUUTSTUT             
+                TRRRUTUSTRTSURTSURTURSUTRRTRT               
+                   USTTUSTSURSTUTUURSUTRTT                  
+                         SRTRRUTUUUS                        
+```
+*Wireframe sphere with latitude/longitude lines. `--filler` sets the surface characters.*
 
 #### Mandala Pattern
 ```bash
-augusto animate mandala "PEACE" --speed 80
-# Output: A hypnotic mandala pattern with rotational symmetry and "PEACE" text
+augusto animate mandala "PEACE" --frames 1 --width 80 --height 40 --speed 80
 ```
+```
+         EEEEEEEE        EEEEEEEE        EEEEEEEE        EEEEEEEE        
+       EE      EE      EE      EE      EE      EE      EE      EE      
+     EE          EE  EE          EE  EE          EE  EE          EE    
+    E              EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE    
+   E              EE                                                         
+  E              EE      EE      EE      EE      EE      EE      EE      
+  E             EE        EE  EE        EE  EE        EE  EE        EE   
+  E            EE          EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE     
+  E           EE                                                         
+  E           EE      EE      EE      EE      EE      EE      EE      EE 
+  E          EE        EE  EE        EE  EE        EE  EE        EE  EE 
+  E         EE          EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE 
+  E        EE                                                         
+  E        EE      EE      EE      EE      EE      EE      EE      EE   
+  E       EE        EE  EE        EE  EE        EE  EE        EE  EE    
+  E      EE          EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+  E     EE                                                         
+  E     EE      EE      EE      EE      EE      EE      EE      EE      EE
+  E    EE        EE  EE        EE  EE        EE  EE        EE  EE  EE   
+  E   EE          EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE 
+  E  EE                                                         
+  E  EE      EE      EE      EE      EE      EE      EE      EE      EE  
+  E EE        EE  EE        EE  EE        EE  EE        EE  EE  EE      
+  EEE          EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE  
+ EE                                                         
+ EE      EE      EE      EE      EE      EE      EE      EE      EE      EE
+EE        EE  EE        EE  EE        EE  EE        EE  EE        EE  EE   
+EE         EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+```
+*Hypnotic rotational symmetry pattern with 12-fold symmetry. Best viewed animated with `--speed 80`.*
 
 #### Pyramid
 ```bash
-augusto animate pyramid "RUST" --frames 50
-# Output: A 3D pyramid rotating with "RUST" on its faces
+augusto animate pyramid "RUST" --frames 1 --width 60 --height 25
 ```
+```
+                     TSURTSURTSURTSURTTU                    
+                     R TR           UR R                    
+                     U   US       TS   T                    
+                     S     TR   UR     S                    
+                     T       USS       U                    
+                     R    STR   URT    R                    
+                     U TRU         SUR T                    
+                     RSSTRUSTRUSTRUSTRTS                    
+```
+*3D pyramid rotating with text on its 4 faces and base.*
 
 ## Development
 
