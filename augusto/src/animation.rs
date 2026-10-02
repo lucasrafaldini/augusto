@@ -203,7 +203,6 @@ const COLORS: &[&str] = &[
 const RESET: &str = "\x1b[0m";
 
 /// Background color for the AUGUSTO title frame
-const BG_COLOR: &str = "\x1b[48;5;234m"; // Dark gray background
 
 /// Generate animated LED ticker border frame with clockwise rotation
 fn add_frame(output: &str, width: usize, config: &AnimationConfig, frame: usize) -> String {
@@ -231,7 +230,7 @@ fn add_frame(output: &str, width: usize, config: &AnimationConfig, frame: usize)
     let repeat_count = (width + ticker_len) / ticker_len + 2;
     let full_ticker: String = ticker_unit.repeat(repeat_count);
     let full_ticker_chars: Vec<char> = full_ticker.chars().collect();
-    let full_len = full_ticker_chars.len();
+    let _full_len = full_ticker_chars.len();
 
     // Get animation height (number of content lines)
     let lines: Vec<&str> = output.lines().collect();
@@ -243,7 +242,7 @@ fn add_frame(output: &str, width: usize, config: &AnimationConfig, frame: usize)
         |perim_pos: usize| -> char { full_ticker_chars[(scroll_offset + perim_pos) % ticker_len] };
 
     // Top border (left to right): positions 0 to width-1
-    let top_ticker: String = (0..width).map(|x| get_char(x)).collect();
+    let top_ticker: String = (0..width).map(&get_char).collect();
 
     // Right border (top to bottom): positions width to width+anim_height-1
     let right_chars: Vec<char> = (0..anim_height).map(|y| get_char(width + y)).collect();
@@ -279,11 +278,7 @@ fn add_frame(output: &str, width: usize, config: &AnimationConfig, frame: usize)
 
     for (i, line) in lines.iter().enumerate() {
         let visible_width = strip_ansi_codes(line).chars().count();
-        let padding = if visible_width < width {
-            width - visible_width
-        } else {
-            0
-        };
+        let padding = width.saturating_sub(visible_width);
 
         let left_char = left_chars[i];
         let right_char = right_chars[i];
