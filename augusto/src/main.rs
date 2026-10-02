@@ -520,7 +520,7 @@ fn run_animation(args: &[String]) {
     let mut filler: Option<String> = None;
     let mut width = 80usize;
     let mut height = 40usize;
-    
+
     // Border options
     let mut border_enabled = true;
     let mut border_text = "AUGUSTO".to_string();

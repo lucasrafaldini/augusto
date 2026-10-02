@@ -208,90 +208,102 @@ const BG_COLOR: &str = "\x1b[48;5;234m"; // Dark gray background
 /// Generate animated LED ticker border frame with clockwise rotation
 fn add_frame(output: &str, width: usize, config: &AnimationConfig, frame: usize) -> String {
     let border = &config.border;
-    
+
     if !border.enabled {
         return output.to_string();
     }
-    
+
     let border_bg = format!("\x1b[48;5;{}m", border.bg_color);
     let border_fg = format!("\x1b[38;5;{}m", border.fg_color);
     let reset = RESET;
-    
+
     // Build the ticker text with separators
     let ticker_unit = format!("{}{}", border.text, border.separator);
     let ticker_len = ticker_unit.len();
-    
+
     // Calculate scroll offset based on frame and scroll_speed
     let frames_per_char = border.scroll_speed.max(1) as isize;
     let direction = border.direction as isize;
-    let scroll_offset = ((frame as isize / frames_per_char) * direction).rem_euclid(ticker_len as isize) as usize;
-    
+    let scroll_offset =
+        ((frame as isize / frames_per_char) * direction).rem_euclid(ticker_len as isize) as usize;
+
     // Generate infinite ticker pattern
     let repeat_count = (width + ticker_len) / ticker_len + 2;
     let full_ticker: String = ticker_unit.repeat(repeat_count);
     let full_ticker_chars: Vec<char> = full_ticker.chars().collect();
     let full_len = full_ticker_chars.len();
-    
+
     // Get animation height (number of content lines)
     let lines: Vec<&str> = output.lines().collect();
     let anim_height = lines.len();
-    
+
     // Perimeter: top(width) + right(anim_height) + bottom(width) + left(anim_height)
     // Total = 2*width + 2*anim_height
-    let get_char = |perim_pos: usize| -> char {
-        full_ticker_chars[(scroll_offset + perim_pos) % ticker_len]
-    };
-    
+    let get_char =
+        |perim_pos: usize| -> char { full_ticker_chars[(scroll_offset + perim_pos) % ticker_len] };
+
     // Top border (left to right): positions 0 to width-1
-    let top_ticker: String = (0..width)
-        .map(|x| get_char(x))
-        .collect();
-    
+    let top_ticker: String = (0..width).map(|x| get_char(x)).collect();
+
     // Right border (top to bottom): positions width to width+anim_height-1
-    let right_chars: Vec<char> = (0..anim_height)
-        .map(|y| get_char(width + y))
-        .collect();
-    
+    let right_chars: Vec<char> = (0..anim_height).map(|y| get_char(width + y)).collect();
+
     // Bottom border (right to left): positions width+anim_height to 2*width+anim_height-1
     let bottom_ticker: String = (0..width)
         .map(|x| get_char(width + anim_height + (width - 1 - x)))
         .collect();
-    
+
     // Left border (bottom to top): positions 2*width+anim_height to 2*width+2*anim_height-1
     let left_chars: Vec<char> = (0..anim_height)
         .map(|y| get_char(2 * width + anim_height + (anim_height - 1 - y)))
         .collect();
-    
+
     // Corner pieces based on thickness
     let (top_left, top_right, bottom_left, bottom_right) = if border.thickness >= 2 {
         ("╔", "╗", "╚", "╝")
     } else {
         ("╭", "╮", "╰", "╯")
     };
-    
-    let top_border = format!("{}{}{}{}{}{}\n", border_bg, border_fg, top_left, top_ticker, top_right, reset);
-    let bottom_border = format!("{}{}{}{}{}{}\n", border_bg, border_fg, bottom_left, bottom_ticker, bottom_right, reset);
-    
+
+    let top_border = format!(
+        "{}{}{}{}{}{}\n",
+        border_bg, border_fg, top_left, top_ticker, top_right, reset
+    );
+    let bottom_border = format!(
+        "{}{}{}{}{}{}\n",
+        border_bg, border_fg, bottom_left, bottom_ticker, bottom_right, reset
+    );
+
     let mut framed = String::new();
     framed.push_str(&top_border);
-    
+
     for (i, line) in lines.iter().enumerate() {
         let visible_width = strip_ansi_codes(line).chars().count();
-        let padding = if visible_width < width { width - visible_width } else { 0 };
-        
+        let padding = if visible_width < width {
+            width - visible_width
+        } else {
+            0
+        };
+
         let left_char = left_chars[i];
         let right_char = right_chars[i];
-        
+
         let side_bg = format!("{}{}", border_bg, border_fg);
         let left_border = format!("{}{}{}", side_bg, left_char, reset);
         let right_border = format!("{}{}{}", side_bg, right_char, reset);
-        
-        let padded_line = format!("{}│{}{}│{}\n", left_border, line, " ".repeat(padding), right_border);
+
+        let padded_line = format!(
+            "{}│{}{}│{}\n",
+            left_border,
+            line,
+            " ".repeat(padding),
+            right_border
+        );
         framed.push_str(&padded_line);
     }
-    
+
     framed.push_str(&bottom_border);
-    
+
     framed
 }
 
