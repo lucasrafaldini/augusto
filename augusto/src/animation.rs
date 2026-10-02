@@ -164,6 +164,70 @@ const COLORS: &[&str] = &[
 
 const RESET: &str = "\x1b[0m";
 
+/// Background color for the AUGUSTO title frame
+const BG_COLOR: &str = "\x1b[48;5;234m"; // Dark gray background
+
+/// Add a decorative frame around the animation output with "AUGUSTO" title
+fn add_frame(output: &str, width: usize, _config: &AnimationConfig) -> String {
+    let title = " AUGUSTO ";
+    let title_padding = (width.saturating_sub(title.len())) / 2;
+    let left_pad = " ".repeat(title_padding);
+    let right_pad = " ".repeat(width - title_padding - title.len());
+    
+    // Build frame components with persistent background color
+    let border_bg = format!("{}", BG_COLOR);
+    let border_fg = "\x1b[38;5;231m"; // White text for border
+    let reset = RESET;
+    
+    let top_border = format!("{}{}{}╭{}╮{}\n", border_bg, border_fg, left_pad, "─".repeat(width), reset);
+    let title_line = format!("{}{}{}│{}{}│{}\n", border_bg, border_fg, left_pad, title, right_pad, reset);
+    let separator = format!("{}{}{}├{}┤{}\n", border_bg, border_fg, left_pad, "─".repeat(width), reset);
+    let empty_line = format!("{}{}{}│{}│{}\n", border_bg, border_fg, left_pad, " ".repeat(width), reset);
+    let bottom_border = format!("{}{}{}╰{}╯{}\n", border_bg, border_fg, left_pad, "─".repeat(width), reset);
+    
+    let mut framed = String::new();
+    framed.push_str(&top_border);
+    framed.push_str(&title_line);
+    framed.push_str(&separator);
+    framed.push_str(&empty_line);
+    
+    // Add side borders to each line of the animation, re-applying frame colors each line
+    for line in output.lines() {
+        let visible_width = strip_ansi_codes(line).chars().count();
+        let padding = if visible_width < width { width - visible_width } else { 0 };
+        // Re-apply frame colors for each line to persist background
+        let padded_line = format!("{}{}{}│{}{}│{}\n", border_bg, border_fg, left_pad, line, " ".repeat(padding), reset);
+        framed.push_str(&padded_line);
+    }
+    
+    framed.push_str(&empty_line);
+    framed.push_str(&bottom_border);
+    
+    framed
+}
+
+/// Strip ANSI escape codes from a string for width calculation
+fn strip_ansi_codes(s: &str) -> String {
+    let mut result = String::new();
+    let mut chars = s.chars().peekable();
+    while let Some(c) = chars.next() {
+        if c == '\x1b' {
+            // Skip escape sequence
+            if let Some(&'[') = chars.peek() {
+                chars.next(); // consume '['
+                for c in chars.by_ref() {
+                    if c.is_ascii_alphabetic() {
+                        break;
+                    }
+                }
+            }
+        } else {
+            result.push(c);
+        }
+    }
+    result
+}
+
 /// Project 3D point to 2D screen coordinates
 fn project(point: &Vec3, width: f32, height: f32, fov: f32, distance: f32) -> Vec2 {
     let factor = fov / (distance + point.z);
@@ -652,8 +716,11 @@ pub fn animate(config: AnimationConfig) {
             _ => render_edges(&edges, (rx, ry, rz), &config, frame),
         };
 
+        // Add decorative frame with AUGUSTO title
+        let framed_output = add_frame(&frame_output, config.width, &config);
+
         // Move cursor to top-left and print frame
-        print!("\x1b[H{}", frame_output);
+        print!("\x1b[H{}", framed_output);
         std::io::Write::flush(&mut std::io::stdout()).ok();
 
         frame += 1;
