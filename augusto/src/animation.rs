@@ -205,7 +205,7 @@ const RESET: &str = "\x1b[0m";
 /// Background color for the AUGUSTO title frame
 const BG_COLOR: &str = "\x1b[48;5;234m"; // Dark gray background
 
-/// Generate animated LED ticker border frame
+/// Generate animated LED ticker border frame with clockwise rotation
 fn add_frame(output: &str, width: usize, config: &AnimationConfig, frame: usize) -> String {
     let border = &config.border;
     
@@ -232,19 +232,34 @@ fn add_frame(output: &str, width: usize, config: &AnimationConfig, frame: usize)
     let full_ticker_chars: Vec<char> = full_ticker.chars().collect();
     let full_len = full_ticker_chars.len();
     
-    // Get visible portion of ticker for top/bottom borders
-    let top_ticker: String = full_ticker_chars[scroll_offset..]
-        .iter()
-        .chain(full_ticker_chars.iter())
-        .take(width)
+    // Get animation height (number of content lines)
+    let lines: Vec<&str> = output.lines().collect();
+    let anim_height = lines.len();
+    
+    // Perimeter: top(width) + right(anim_height) + bottom(width) + left(anim_height)
+    // Total = 2*width + 2*anim_height
+    let get_char = |perim_pos: usize| -> char {
+        full_ticker_chars[(scroll_offset + perim_pos) % ticker_len]
+    };
+    
+    // Top border (left to right): positions 0 to width-1
+    let top_ticker: String = (0..width)
+        .map(|x| get_char(x))
         .collect();
     
-    // Bottom border scrolls in opposite direction for cool effect
-    let bottom_offset = (scroll_offset + width / 2) % ticker_len;
-    let bottom_ticker: String = full_ticker_chars[bottom_offset..]
-        .iter()
-        .chain(full_ticker_chars.iter())
-        .take(width)
+    // Right border (top to bottom): positions width to width+anim_height-1
+    let right_chars: Vec<char> = (0..anim_height)
+        .map(|y| get_char(width + y))
+        .collect();
+    
+    // Bottom border (right to left): positions width+anim_height to 2*width+anim_height-1
+    let bottom_ticker: String = (0..width)
+        .map(|x| get_char(width + anim_height + (width - 1 - x)))
+        .collect();
+    
+    // Left border (bottom to top): positions 2*width+anim_height to 2*width+2*anim_height-1
+    let left_chars: Vec<char> = (0..anim_height)
+        .map(|y| get_char(2 * width + anim_height + (anim_height - 1 - y)))
         .collect();
     
     // Corner pieces based on thickness
@@ -257,9 +272,6 @@ fn add_frame(output: &str, width: usize, config: &AnimationConfig, frame: usize)
     let top_border = format!("{}{}{}{}{}{}\n", border_bg, border_fg, top_left, top_ticker, top_right, reset);
     let bottom_border = format!("{}{}{}{}{}{}\n", border_bg, border_fg, bottom_left, bottom_ticker, bottom_right, reset);
     
-    // Side borders - vertical scrolling ticker
-    let lines: Vec<&str> = output.lines().collect();
-    
     let mut framed = String::new();
     framed.push_str(&top_border);
     
@@ -267,10 +279,8 @@ fn add_frame(output: &str, width: usize, config: &AnimationConfig, frame: usize)
         let visible_width = strip_ansi_codes(line).chars().count();
         let padding = if visible_width < width { width - visible_width } else { 0 };
         
-        // Vertical ticker position for this line (offset by line index for wave effect)
-        let side_offset = (scroll_offset + i * direction as usize) % ticker_len;
-        let left_char = full_ticker_chars[side_offset % full_len];
-        let right_char = full_ticker_chars[(side_offset + ticker_len / 2) % full_len];
+        let left_char = left_chars[i];
+        let right_char = right_chars[i];
         
         let side_bg = format!("{}{}", border_bg, border_fg);
         let left_border = format!("{}{}{}", side_bg, left_char, reset);
