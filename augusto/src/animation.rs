@@ -167,40 +167,49 @@ const RESET: &str = "\x1b[0m";
 /// Background color for the AUGUSTO title frame
 const BG_COLOR: &str = "\x1b[48;5;234m"; // Dark gray background
 
-/// Add a decorative frame around the animation output with "AUGUSTO" title
+/// Add a decorative coin-style frame around the animation output
+/// with "AUGUSTO" repeated on all four borders like Greek/Roman coins
 fn add_frame(output: &str, width: usize, _config: &AnimationConfig) -> String {
-    let title = " AUGUSTO ";
-    let title_padding = (width.saturating_sub(title.len())) / 2;
-    let left_pad = " ".repeat(title_padding);
-    let right_pad = " ".repeat(width - title_padding - title.len());
+    const COIN_TEXT: &str = "AUGUSTO";
+    const COIN_LEN: usize = 7; // "AUGUSTO".len()
     
-    // Build frame components with persistent background color
     let border_bg = format!("{}", BG_COLOR);
     let border_fg = "\x1b[38;5;231m"; // White text for border
     let reset = RESET;
     
-    let top_border = format!("{}{}{}╭{}╮{}\n", border_bg, border_fg, left_pad, "─".repeat(width), reset);
-    let title_line = format!("{}{}{}│{}{}│{}\n", border_bg, border_fg, left_pad, title, right_pad, reset);
-    let separator = format!("{}{}{}├{}┤{}\n", border_bg, border_fg, left_pad, "─".repeat(width), reset);
-    let empty_line = format!("{}{}{}│{}│{}\n", border_bg, border_fg, left_pad, " ".repeat(width), reset);
-    let bottom_border = format!("{}{}{}╰{}╯{}\n", border_bg, border_fg, left_pad, "─".repeat(width), reset);
+    // Create top/bottom border with repeated "AUGUSTO"
+    let repeat_count = (width + COIN_LEN - 1) / COIN_LEN;
+    let coin_pattern: String = COIN_TEXT.repeat(repeat_count);
+    let coin_pattern = &coin_pattern[..width.min(coin_pattern.len())];
+    
+    let top_border = format!("{}{}{}╭{}╮{}\n", border_bg, border_fg, " ".repeat(0), coin_pattern, reset);
+    let bottom_border = format!("{}{}{}╰{}╯{}\n", border_bg, border_fg, " ".repeat(0), coin_pattern, reset);
+    
+    // Side borders - vertical "AUGUSTO" 
+    let side_text = COIN_TEXT;
     
     let mut framed = String::new();
     framed.push_str(&top_border);
-    framed.push_str(&title_line);
-    framed.push_str(&separator);
-    framed.push_str(&empty_line);
     
-    // Add side borders to each line of the animation, re-applying frame colors each line
-    for line in output.lines() {
+    // Add side borders to each line of the animation
+    let lines: Vec<&str> = output.lines().collect();
+    let anim_height = lines.len();
+    
+    for (i, line) in lines.iter().enumerate() {
         let visible_width = strip_ansi_codes(line).chars().count();
         let padding = if visible_width < width { width - visible_width } else { 0 };
-        // Re-apply frame colors for each line to persist background
-        let padded_line = format!("{}{}{}│{}{}│{}\n", border_bg, border_fg, left_pad, line, " ".repeat(padding), reset);
+        
+        // Get character for left/right border (cycle through AUGUSTO)
+        let left_char = side_text.chars().nth(i % COIN_LEN).unwrap_or('A');
+        let right_char = side_text.chars().nth((COIN_LEN - 1 - (i % COIN_LEN)) % COIN_LEN).unwrap_or('O');
+        
+        let left_border = format!("{}{}{}{}", border_bg, border_fg, left_char, reset);
+        let right_border = format!("{}{}{}{}", border_bg, border_fg, right_char, reset);
+        
+        let padded_line = format!("{}│{}{}│{}\n", left_border, line, " ".repeat(padding), right_border);
         framed.push_str(&padded_line);
     }
     
-    framed.push_str(&empty_line);
     framed.push_str(&bottom_border);
     
     framed
