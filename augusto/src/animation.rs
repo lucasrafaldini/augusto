@@ -734,7 +734,7 @@ fn render_mandala(edges: &[Edge], rotation: f32, config: &AnimationConfig, frame
         let x1 = proj_end.x.round() as i32;
         let y1 = proj_end.y.round() as i32;
 
-        draw_line(&mut buffer, x0, y0, x1, y1, ' ');
+        draw_line(&mut buffer, x0, y0, x1, y1, '█');
     }
 
     // Fill with characters
@@ -780,7 +780,7 @@ pub fn animate(config: AnimationConfig) {
         AnimationShape::Cube => generate_cube(3.0),
         AnimationShape::Cube5D => generate_cube5d(2.5),
         AnimationShape::Sphere => generate_sphere(2.5, 16, 32),
-        AnimationShape::Mandala => generate_mandala(12, 6, 15.0),
+        AnimationShape::Mandala => generate_mandala(12, 6, 8.0),
         AnimationShape::Pyramid => generate_pyramid(3.0, 4.0),
     };
 
@@ -841,7 +841,7 @@ pub fn get_frame(config: &AnimationConfig, frame: usize) -> String {
         AnimationShape::Cube => generate_cube(3.0),
         AnimationShape::Cube5D => generate_cube5d(2.5),
         AnimationShape::Sphere => generate_sphere(2.5, 16, 32),
-        AnimationShape::Mandala => generate_mandala(12, 6, 15.0),
+        AnimationShape::Mandala => generate_mandala(12, 6, 8.0),
         AnimationShape::Pyramid => generate_pyramid(3.0, 4.0),
     };
 
