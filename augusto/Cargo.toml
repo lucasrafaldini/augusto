@@ -1,6 +1,6 @@
 [package]
 name = "augusto"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 authors = ["Lucas Rafaldini <lucas.rafaldini@gmail.com>"]
 description = "A Rust command-line suite for creative word operations, inspired by concrete poet Augusto de Campos"

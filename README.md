@@ -1,19 +1,32 @@
 # augusto 🎭
 
-[![Rust](https://github.com/lucasrafaldini/augusto/workflows/Rust/badge.svg)](https://github.com/lucasrafaldini/augusto/actions)
+[![Rust](https://github.com/lucasrafaldini/augusto/actions/workflows/rust.yml/badge.svg)](https://github.com/lucasrafaldini/augusto/actions/workflows/rust.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Rust Version](https://img.shields.io/badge/rust-1.56%2B-blue.svg)](https://www.rust-lang.org)
+[![Crates.io](https://img.shields.io/crates/v/augusto.svg)](https://crates.io/crates/augusto)
+[![Crates.io Downloads](https://img.shields.io/crates/d/augusto.svg)](https://crates.io/crates/augusto)
+[![Hacktoberfest 2026](https://img.shields.io/badge/Hacktoberfest-2026-orange.svg)](https://hacktoberfest.digitalocean.com/)
+[![Open Issues](https://img.shields.io/github/issues/lucasrafaldini/augusto)](https://github.com/lucasrafaldini/augusto/issues)
+[![Good First Issues](https://img.shields.io/github/issues/lucasrafaldini/augusto/good%20first%20issue)](https://github.com/lucasrafaldini/augusto/issues?q=is%3Aissue+is%3Aopen+label%3A"good+first+issue")
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/lucasrafaldini/augusto/pulls)
+[![Code Style: Rust](https://img.shields.io/badge/code_style-rustfmt-blue.svg)](https://github.com/rust-lang/rustfmt)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
 augusto is a Rust command-line suite that allows you to interact with words in creative and insightful ways directly from your terminal.
 
 ## Introduction
 
-Inspired by the Brazilian concrete poet Augusto de Campos, who explored the visual and sonic dimensions of language, **augusto** empowers you to deconstruct and recombine words through various operations. Currently featuring anagram generation and ASCII art creation, with plans to expand into analogic interpolations and other word transformations.
+Inspired by the Brazilian concrete poet Augusto de Campos, who explored the visual and sonic dimensions of language, **augusto** empowers you to deconstruct and recombine words through various operations. Featuring anagram generation, ASCII art, phonetic pattern analysis, palindrome detection, syllable splitting, word blending (portmanteau), and etymological root discovery.
 
 ## Features
 
 - 🔄 **Anagram Generation**: Generate all possible letter combinations of a word
 - 🎨 **ASCII Art**: Write one word using another word as filler, creating concrete poetry
+- 🔤 **Phonetic Pattern**: Visualise the vowel/consonant (V/C) rhythm of any word
+- 🔁 **Palindrome Analysis**: Detect palindromes, mirror words, and find the longest palindromic substring
+- 🔡 **Syllable Splitting**: Heuristic syllable decomposition useful for poetic rhythm
+- 🧬 **Word Blending**: Generate portmanteau fusions of two words
+- 📚 **Etymological Roots**: Identify Latin and Greek prefixes and suffixes embedded in a word
 - ⚡ **Performance Benchmarks**: Measure and analyze operation performance with detailed statistics
 - 🚀 **Fast & Efficient**: Built with Rust for optimal performance
 - 📦 **Minimal Dependencies**: Lightweight footprint (only termion for terminal interactions)
@@ -26,6 +39,7 @@ Inspired by the Brazilian concrete poet Augusto de Campos, who explored the visu
 - [Usage](#usage)
 - [Examples](#examples)
 - [Development](#development)
+- [Hacktoberfest 2026](#hacktoberfest-2026-)
 - [Contributing](#contributing)
 - [Roadmap](#roadmap)
 - [License](#license)
@@ -84,6 +98,33 @@ augusto art "RUST" "code"
 
 This will create ASCII art of the word "RUST" using the letters from "code" as filler.
 
+### Phonetic Pattern
+```bash
+augusto pattern "rust"
+# Compare two words:
+augusto pattern "rust" "poesia"
+```
+
+### Palindrome Analysis
+```bash
+augusto palindrome "racecar"
+```
+
+### Syllable Splitting
+```bash
+augusto syllable "beautiful"
+```
+
+### Word Blending
+```bash
+augusto blend "smoke" "fog"
+```
+
+### Etymological Roots
+```bash
+augusto roots "biology"
+```
+
 ## Usage
 
 ### Commands
@@ -138,6 +179,113 @@ augusto bench anagram "test"
 # Benchmark ASCII art
 augusto bench art "RUST" "code"
 ```
+
+#### ASCII Animations (NEW in 0.2.0)
+
+```bash
+augusto animate <shape> <word> [options]
+```
+
+**Arguments:**
+- `<shape>`: The 3D shape to animate (`donut`, `cube`, `cube5d`, `sphere`, `mandala`, `pyramid`)
+- `<word>`: The word to display within the animation
+
+**Options:**
+- `--speed <ms>`: Frame delay in milliseconds (default: 100)
+- `--frames <n>`: Number of frames to render (default: infinite, use Ctrl+C to stop)
+- `--color`: Enable ANSI color output
+- `--filler <word>`: Word to use as filler characters (default: the main word)
+
+**Output:**
+Animated ASCII art of the specified 3D shape with the word embedded.
+
+**Examples:**
+```bash
+# Rotating donut with word "RUST"
+augusto animate donut "RUST"
+
+# Rotating cube with custom speed
+augusto animate cube "CODE" --speed 50
+
+# 5D cube projection with color
+augusto animate cube5d "HACKTOBERFEST" --color
+
+# Sphere with custom filler word
+augusto animate sphere "RUST" --filler "code"
+
+# Mandala pattern
+augusto animate mandala "PEACE" --speed 80
+
+# Pyramid with limited frames
+augusto animate pyramid "RUST" --frames 50
+```
+
+#### Phonetic Pattern
+
+```bash
+augusto pattern <word> [word2]
+```
+
+**Arguments:**
+- `<word>`: The word to analyse (required)
+- `[word2]`: A second word for side-by-side comparison (optional)
+
+**Output:**
+The V/C pattern, vowel count, and consonant count of each word.
+
+#### Palindrome Analysis
+
+```bash
+augusto palindrome <word>
+```
+
+**Arguments:**
+- `<word>`: The word to analyse (required)
+
+**Output:**
+Whether the word is a palindrome, its mirror (reverse), and the longest
+palindromic substring found within it.
+
+#### Syllable Splitting
+
+```bash
+augusto syllable <word>
+```
+
+**Arguments:**
+- `<word>`: The word to split (required)
+
+**Output:**
+The word broken into syllables with a hyphen separator and total syllable count.
+Uses a heuristic onset-maximization algorithm (works well for English and
+Portuguese; results may vary for other languages).
+
+#### Word Blending (Portmanteau)
+
+```bash
+augusto blend <word1> <word2>
+```
+
+**Arguments:**
+- `<word1>`: First word (required)
+- `<word2>`: Second word (required)
+
+**Output:**
+A list of portmanteau blends, sorted by how "balanced" the blend is (closest
+to the average length of both input words appears first).
+
+#### Etymological Roots
+
+```bash
+augusto roots <word>
+```
+
+**Arguments:**
+- `<word>`: The word to analyse (required)
+
+**Output:**
+All Latin and Greek prefixes and suffixes identified in the word, along with
+their position, origin, and meaning. The database contains ~100 entries.
 
 #### Help
 
@@ -259,6 +407,238 @@ augusto bench art "LUXO" "LIXO"
 
 **Note:** Benchmark iterations automatically adjust based on input complexity. Shorter inputs run more iterations for accurate measurements.
 
+### ASCII Animation Examples
+
+#### Rotating Donut
+```bash
+augusto animate donut "RUST" --frames 1 --width 70 --height 25
+```
+```
+                         RRTSSTSUURTTSURTSTSURRT                       
+                      USSUURTSSURTSUURTUSUSURSURSUT                    
+                    SRTSURSUTSUTSUURTSRTSSRTRTRURURRT                  
+                  RRSUTTUR RTUTSURURTSRURTTSUU TRSSURST                
+                USTT RUTSTURSRTRTSTSURUTUURRTSTSURST UTTR              
+               RSURUSTTUURSSSTUSUURRSRSTSSUSUTRSTUUTTURRSS             
+              RUTSTSURTSURTRUTRRT       RRSUSUUTRSSRRSSSTSU            
+              SUURSRRSSRSUTTUS             USSRRUSUTTRUURUR            
+              TSUUTRUSTRRUSTSU             RTTTSRTURSUTRTRT            
+              URTSUSUTTRUUSSTSTTT       STRTRTSSURRSTRSUURR            
+               TSRT RTSURTTRRURUSRUUTUTSTURSUSUURTSUU STRT             
+                URUS USRURSSUTRUSTTUSTRURSSTUURSTTUR SSUT              
+                 TSTRRTUSRSTRSTRUUSTRUSTSRURSTUTRRSTSRRS               
+                   SRUTSSRUSTTSTRUSTRUSSTRSRURUTRUSTTS                 
+                      URUSRURUSTSTRUSSTRRSTRUSSRUUU                    
+                         TRTUSTRUSSTRRUSSTRRUSTT                       
+```
+*Run without `--frames` for infinite animation. Add `--color` for ANSI colors.*
+
+#### Rotating Cube
+```bash
+augusto animate cube "CODE" --frames 1 --width 70 --height 25
+```
+```
+                    ELOLLEHOLLEHOLLEHOLLEHOLLEHOLEE                   
+                    L LO                       LL H                   
+                    L   HE                   HO   O                   
+                    O     LOLLEHOLLEHOLLEHOLE     L                   
+                    H      H               L      L                   
+                    E      E               E      E                   
+                    L      L               H      H                   
+                    L      L               O      O                   
+                    O     OLLOHELLOHELLOHELLH     L                   
+                    H   LL                   OL   L                   
+                    E HE                       LE E                   
+                    HOLLOHELLOHELLOHELLOHELLOHELLHH                   
+```
+*Wireframe cube rotating on X, Y, and Z axes. Use `--speed 50` for faster rotation.*
+
+#### 5D Cube (Hypercube/Tesseract Projection)
+```bash
+augusto animate cube5d "HACK" --frames 1 --width 70 --height 25 --color
+```
+```
+         CKCKHACKHACKHACKHACKHACKHACKHACKHACKHACKHACKHACKHACCK        
+         C HAC                                            HK K        
+         A   CKH                                       KCA   C        
+         H      ACK                                  AH      A        
+         K         HAC                            HKC        H        
+         C           CKH                       ACA           K        
+         A              AAHACKHACKHACKHACKHACKKK             C        
+         H               A KCHACKHACKHACKHKHA K              A        
+         K               H  KAKHACKHACKHAC A  C              H        
+         C               K  C C         A  H  A              K        
+         A               C  A A         H  K  H              C        
+         H               A  HKCHACKHACKHAC C  K              A        
+         K               H AHACKHACKHACKHAKHA C              H        
+         C              AKHACKHACKHACKHACKHACKKA             K        
+         A            KH                       AHK           C        
+         H         HAC                            CAH        A        
+         K      ACK                                 CKC      H        
+         C    KH                                       AHK   K        
+         A HAC                                            CA C        
+         AKHACKHACKHACKHACKHACKHACKHACKHACKHACKHACKHACKHACKHHK        
+```
+*4D hypercube (tesseract) projected to 3D then 2D. `--color` enables rainbow ANSI colors.*
+
+#### Rotating Sphere
+```bash
+augusto animate sphere "RUST" --filler "code" --frames 1 --width 60 --height 20
+```
+```
+                          USSTRURSU                         
+                    TRTUURTSURRSTUTRURSTR                   
+                URSTURRTSUURTSURTSUSTUTSTRRTU               
+              TSTURSTSRRTSRURUTTSRRTSURRSSUTSST             
+              RTSUTSSUTSTUUTSSRRSUUTTSUUTTSRUSUS            
+             RTRTRUTUSRRTSURTSURTSURTSSRRSUUTTUR            
+             TSSUSRSTRUSTRUSTRUSTRUSTRUSTRSRUSTS            
+             URURRSTUTTSUUTRUTTSUUTRUTTUUTSSRRSU            
+              RTSSTURRTSUUTRTRSSURTTUSURTTURTURS            
+              USUTSUURRTSRSSUUTRURSSRTTSUUTSTUT             
+                TRRRUTUSTRTSURTSURTURSUTRRTRT               
+                   USTTUSTSURSTUTUURSUTRTT                  
+                         SRTRRUTUUUS                        
+```
+*Wireframe sphere with latitude/longitude lines. `--filler` sets the surface characters.*
+
+#### Mandala Pattern
+```bash
+augusto animate mandala "PEACE" --frames 1 --width 80 --height 40 --speed 80
+```
+```
+         EEEEEEEE        EEEEEEEE        EEEEEEEE        EEEEEEEE        
+       EE      EE      EE      EE      EE      EE      EE      EE      
+     EE          EE  EE          EE  EE          EE  EE          EE    
+    E              EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE    
+   E              EE                                                         
+  E              EE      EE      EE      EE      EE      EE      EE      
+  E             EE        EE  EE        EE  EE        EE  EE        EE   
+  E            EE          EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE     
+  E           EE                                                         
+  E           EE      EE      EE      EE      EE      EE      EE      EE 
+  E          EE        EE  EE        EE  EE        EE  EE        EE  EE 
+  E         EE          EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE 
+  E        EE                                                         
+  E        EE      EE      EE      EE      EE      EE      EE      EE   
+  E       EE        EE  EE        EE  EE        EE  EE        EE  EE    
+  E      EE          EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+  E     EE                                                         
+  E     EE      EE      EE      EE      EE      EE      EE      EE      EE
+  E    EE        EE  EE        EE  EE        EE  EE        EE  EE  EE   
+  E   EE          EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE 
+  E  EE                                                         
+  E  EE      EE      EE      EE      EE      EE      EE      EE      EE  
+  E EE        EE  EE        EE  EE        EE  EE        EE  EE  EE      
+  EEE          EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE  
+ EE                                                         
+ EE      EE      EE      EE      EE      EE      EE      EE      EE      EE
+EE        EE  EE        EE  EE        EE  EE        EE  EE        EE  EE   
+EE         EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+```
+*Hypnotic rotational symmetry pattern with 12-fold symmetry. Best viewed animated with `--speed 80`.*
+
+#### Pyramid
+```bash
+augusto animate pyramid "RUST" --frames 1 --width 60 --height 25
+```
+```
+                     TSURTSURTSURTSURTTU                    
+                     R TR           UR R                    
+                     U   US       TS   T                    
+                     S     TR   UR     S                    
+                     T       USS       U                    
+                     R    STR   URT    R                    
+                     U TRU         SUR T                    
+                     RSSTRUSTRUSTRUSTRTS                    
+```
+*3D pyramid rotating with text on its 4 faces and base.*
+
+### Phonetic Pattern Examples
+
+```bash
+augusto pattern "rust"
+# Output:
+# Word:       rust
+# Pattern:    CVCC
+# Vowels:     1
+# Consonants: 3
+
+augusto pattern "rust" "poesia"
+# Output (both words):
+# Word:       rust
+# Pattern:    CVCC
+# Vowels:     1
+# Consonants: 3
+#
+# Word:       poesia
+# Pattern:    CVVCVV
+# Vowels:     4
+# Consonants: 2
+```
+
+### Palindrome Examples
+
+```bash
+augusto palindrome "racecar"
+# Output:
+# Word:             racecar
+# Is palindrome:    Yes ✓
+# Mirror (reverse): racecar
+# Longest palindromic substring: "racecar"
+
+augusto palindrome "hello"
+# Output:
+# Word:             hello
+# Is palindrome:    No
+# Mirror (reverse): olleh
+# Longest palindromic substring: "ll"
+```
+
+### Syllable Examples
+
+```bash
+augusto syllable "beautiful"
+# Output:
+# Word:      beautiful
+# Syllables: beau-ti-ful (3 syllables)
+
+augusto syllable "rust"
+# Output:
+# Word:      rust
+# Syllables: rust (1 syllable)
+```
+
+### Word Blending Examples
+
+```bash
+augusto blend "smoke" "fog"
+# Output includes "smog" (sm + og) near the top
+
+augusto blend "breakfast" "lunch"
+# Output: portmanteau words like "brunch" and many other combinations
+```
+
+### Etymological Roots Examples
+
+```bash
+augusto roots "biology"
+# Output:
+# Word: biology
+#
+# Roots found:
+#   logy       (suffix, Greek) — study of
+#   bio        (prefix, Greek) — life
+#   bi         (prefix, Latin) — two
+
+augusto roots "telescope"
+# Output:
+# Word: telescope
+#
+# Roots found:
+#   scope      (suffix, Greek) — viewing instrument
+#   tele       (prefix, Greek) — far, distant
+
 ## Development
 
 ### Project Structure
@@ -270,7 +650,13 @@ augusto/
 │   │   ├── main.rs       # Entry point and CLI handling
 │   │   ├── anagram.rs    # Anagram generation logic
 │   │   ├── ascii_art.rs  # ASCII art generation logic
-│   │   └── benchmark.rs  # Performance benchmarking utilities
+│   │   ├── animation.rs  # ASCII animation logic (3D shapes, donuts, etc.)
+│   │   ├── benchmark.rs  # Performance benchmarking utilities
+│   │   ├── pattern.rs    # Phonetic pattern (V/C) analysis
+│   │   ├── palindrome.rs # Palindrome detection, mirror, longest substring
+│   │   ├── syllable.rs   # Heuristic syllable splitting
+│   │   ├── blend.rs      # Word blending / portmanteau generation
+│   │   └── roots.rs      # Latin/Greek etymological roots database
 │   ├── Cargo.toml        # Project dependencies
 │   └── Cargo.lock        # Locked dependencies
 ├── .github/
@@ -300,6 +686,48 @@ cargo run -- "word"
 ```bash
 cd augusto
 cargo build --release
+```
+
+## Hacktoberfest 2026 🎃
+
+augusto is participating in **Hacktoberfest 2026**! We welcome contributors of all skill levels to help improve this project.
+
+### How to Participate
+
+1. **Check out our [Hacktoberfest issues](https://github.com/lucasrafaldini/augusto/issues?q=is%3Aissue+is%3Aopen+label%3Ahacktoberfest)** - Look for issues labeled `hacktoberfest` and `good first issue`
+2. **Comment on an issue** to claim it and ask questions
+3. **Fork the repository** and create a branch for your work
+4. **Make your changes** following our [contribution guidelines](#contributing)
+5. **Submit a Pull Request** with the `hacktoberfest` label
+
+### Hacktoberfest-Specific Issues for 2026
+
+We've prepared the following issues perfect for Hacktoberfest contributions:
+
+| Issue | Difficulty | Description |
+|-------|------------|-------------|
+| [Add new ASCII animation shapes](https://github.com/lucasrafaldini/augusto/issues/1) | 🟢 Beginner | Add more 3D shapes like torus, klein bottle, mobius strip |
+| [Implement color support for animations](https://github.com/lucasrafaldini/augusto/issues/2) | 🟡 Intermediate | Add ANSI color codes to ASCII animations |
+| [Add export to GIF/Video feature](https://github.com/lucasrafaldini/augusto/issues/3) | 🔴 Advanced | Export animations as animated GIF or MP4 |
+| [Create interactive animation mode](https://github.com/lucasrafaldini/augusto/issues/4) | 🟡 Intermediate | Real-time keyboard controls for animation parameters |
+| [Add word-based particle effects](https://github.com/lucasrafaldini/augusto/issues/5) | 🟢 Beginner | Make letters explode, float, or swarm based on word meaning |
+
+### Quick Start for Hacktoberfest Contributors
+
+```bash
+# 1. Fork and clone
+git clone https://github.com/YOUR_USERNAME/augusto.git
+cd augusto
+
+# 2. Build and test
+cd augusto
+cargo build --release
+cargo test
+
+# 3. Try the new animation feature!
+cargo run -- animate donut "RUST"
+cargo run -- animate cube "CODE"
+cargo run -- animate sphere "HACKTOBERFEST"
 ```
 
 ## Contributing
@@ -333,7 +761,7 @@ Please ensure your contributions adhere to our [Code of Conduct](CONTRIBUTE.md).
 
 ## Roadmap
 
-### Version 0.1.x (Current)
+### Version 0.1.x
 - [x] Basic anagram generation
 - [x] ASCII art generation
 - [x] CLI interface
@@ -341,14 +769,17 @@ Please ensure your contributions adhere to our [Code of Conduct](CONTRIBUTE.md).
 - [x] Performance benchmarks
 - [x] Documentation improvements
 
-### Version 0.2.0 (Planned)
-- [ ] Word combination operations
-- [ ] Pattern matching for anagrams
+### Version 0.2.0 (Current)
+- [x] Phonetic pattern analysis (V/C patterns)
+- [x] Palindrome detection, mirror, and longest palindromic substring
+- [x] Heuristic syllable splitting
+- [x] Word blending / portmanteau generation
+- [x] Etymological roots database (Latin & Greek, ~100 entries)
+
+### Version 0.3.0 (Planned)
 - [ ] Dictionary filtering (real words only)
 - [ ] Output formatting options (JSON, CSV, etc.)
 - [ ] Interactive mode
-
-### Version 0.3.0 (Future)
 - [ ] Analogic interpolations
 - [ ] Visual word transformations
 - [ ] Multi-word operations

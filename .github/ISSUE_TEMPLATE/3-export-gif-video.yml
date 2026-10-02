@@ -1,0 +1,54 @@
+name: "📹 Add Export to GIF/Video Feature"
+description: "Export animations as animated GIF or MP4"
+title: "[Animation] Export animations to GIF/Video"
+labels: ["hacktoberfest", "enhancement", "animation", "export", "advanced"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing! This is an advanced issue for Hacktoberfest 2026. It adds the ability to save animations as files.
+  - type: textarea
+    id: export-formats
+    attributes:
+      label: "Export Formats to Support"
+      description: "Which formats should be supported?"
+      placeholder: |
+        - Animated GIF (simplest, wide support)
+        - MP4/H.264 (requires ffmpeg or similar)
+        - WebM (modern, good compression)
+        - APNG (animated PNG)
+        - ASCII frames as JSON (for programmatic use)
+    validations:
+      required: true
+  - type: checkboxes
+    id: requirements
+    attributes:
+      label: "Implementation Requirements"
+      options:
+        - label: "Add --export flag with format option (gif, mp4, webm, json)"
+          required: true
+        - label: "Add --output flag for output file path"
+          required: true
+        - label: "Implement GIF export using `gif` crate"
+          required: true
+        - label: "Implement MP4/WebM export via ffmpeg (optional dependency)"
+          required: false
+        - label: "Support custom frame rate (--fps)"
+          required: true
+        - label: "Support custom dimensions (--width, --height)"
+          required: true
+        - label: "Handle color conversion for export"
+          required: true
+        - label: "Includes unit/integration tests"
+          required: true
+        - label: "Updates README with export examples"
+          required: true
+  - type: markdown
+    attributes:
+      value: |
+        ## Technical Considerations
+        - **GIF**: Use `gif` crate - pure Rust, no external deps
+        - **Video**: Shell out to `ffmpeg` or use `ffmpeg-next` crate
+        - **Frame capture**: Render frames to a buffer, then encode
+        - **Memory**: Stream frames to avoid high memory usage
+        - Reference crates: `gif`, `ffmpeg-next`, `image`
